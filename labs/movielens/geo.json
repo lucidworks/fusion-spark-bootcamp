@@ -1,0 +1,7 @@
+{
+  "name": "geo",
+  "assetType": "project",
+  "description": "tables and views for geo-spatial data",
+  "tags": ["geospatial","zipcode"],
+  "cacheOnLoad": false
+}

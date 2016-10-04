@@ -1,0 +1,326 @@
+{
+  "stages" : [ {
+    "type" : "tika-parser",
+    "id" : "tika_content_csv_disabled_stage",
+    "includeImages" : true,
+    "flattenCompound" : false,
+    "addFailedDocs" : true,
+    "addOriginalContent" : false,
+    "contentField" : "_raw_content_",
+    "contentEncoding" : "binary",
+    "returnXml" : false,
+    "keepOriginalStructure" : false,
+    "extractHtmlLinks" : true,
+    "extractOtherLinks" : false,
+    "csvParsing" : false,
+    "skip" : false,
+    "label" : "tika-parser",
+    "type" : "tika-parser"
+  }, {
+    "type" : "field-mapping",
+    "id" : "Dynamic_fields",
+    "mappings" : [ {
+      "source" : "Content-Encoding",
+      "target" : "contentEncoding_s",
+      "operation" : "move"
+    }, {
+      "source" : "Character-Set",
+      "target" : "characterSet_s",
+      "operation" : "move"
+    }, {
+      "source" : "Content-Length",
+      "target" : "contentLength_l",
+      "operation" : "move"
+    }, {
+      "source" : "FileSize",
+      "target" : "fileSize_l",
+      "operation" : "move"
+    }, {
+      "source" : "FileName",
+      "target" : "fileName_s",
+      "operation" : "move"
+    }, {
+      "source" : "Content-Type",
+      "target" : "mimeType_s",
+      "operation" : "move"
+    }, {
+      "source" : "MimeType",
+      "target" : "mimeType_s",
+      "operation" : "move"
+    }, {
+      "source" : "Title",
+      "target" : "title",
+      "operation" : "move"
+    }, {
+      "source" : "Description",
+      "target" : "description",
+      "operation" : "move"
+    }, {
+      "source" : "Subject",
+      "target" : "subject",
+      "operation" : "move"
+    }, {
+      "source" : "created",
+      "target" : "dateCreated_dt",
+      "operation" : "move"
+    }, {
+      "source" : "ContentCreated",
+      "target" : "dateCreated_dt",
+      "operation" : "move"
+    }, {
+      "source" : "meta:creation_date",
+      "target" : "dateCreated_dt",
+      "operation" : "move"
+    }, {
+      "source" : "Creation-Date",
+      "target" : "dateCreated_dt",
+      "operation" : "move"
+    }, {
+      "source" : "date",
+      "target" : "dateCreated_dt",
+      "operation" : "move"
+    }, {
+      "source" : "Author",
+      "target" : "author",
+      "operation" : "move"
+    }, {
+      "source" : "meta:author",
+      "target" : "author",
+      "operation" : "move"
+    }, {
+      "source" : "Contributor",
+      "target" : "author",
+      "operation" : "move"
+    }, {
+      "source" : "LastModifiedBy",
+      "target" : "author",
+      "operation" : "move"
+    }, {
+      "source" : "Last-Author",
+      "target" : "author",
+      "operation" : "move"
+    }, {
+      "source" : "fullname",
+      "target" : "author",
+      "operation" : "move"
+    }, {
+      "source" : "meta:last-author",
+      "target" : "author",
+      "operation" : "move"
+    }, {
+      "source" : "Last-Modified",
+      "target" : "last_modified",
+      "operation" : "move"
+    }, {
+      "source" : "fileLastModified",
+      "target" : "last_modified",
+      "operation" : "move"
+    }, {
+      "source" : "ContentLastModified",
+      "target" : "last_modified",
+      "operation" : "move"
+    }, {
+      "source" : "Last-Save-Date",
+      "target" : "last_modified",
+      "operation" : "move"
+    }, {
+      "source" : "fullText",
+      "target" : "content_txt",
+      "operation" : "move"
+    }, {
+      "source" : "plainTextContent",
+      "target" : "content_txt",
+      "operation" : "move"
+    }, {
+      "source" : "plainTextMessageContent",
+      "target" : "content_txt",
+      "operation" : "move"
+    }, {
+      "source" : "body",
+      "target" : "content_txt",
+      "operation" : "move"
+    }, {
+      "source" : "content",
+      "target" : "content_txt",
+      "operation" : "move"
+    }, {
+      "source" : "keyword",
+      "target" : "keywords",
+      "operation" : "move"
+    }, {
+      "source" : "Keywords",
+      "target" : "keywords",
+      "operation" : "move"
+    }, {
+      "source" : "messageSubject",
+      "target" : "title",
+      "operation" : "move"
+    }, {
+      "source" : "name",
+      "target" : "title",
+      "operation" : "move"
+    }, {
+      "source" : "Page-Count",
+      "target" : "pageCount_i",
+      "operation" : "move"
+    }, {
+      "source" : "PageCount",
+      "target" : "pageCount_i",
+      "operation" : "move"
+    }, {
+      "source" : "Slide-Count",
+      "target" : "pageCount_i",
+      "operation" : "move"
+    }, {
+      "source" : "Slides",
+      "target" : "pageCount_i",
+      "operation" : "move"
+    }, {
+      "source" : "xmpTPg:NPages",
+      "target" : "pageCount_i",
+      "operation" : "move"
+    }, {
+      "source" : "parsing_time",
+      "target" : "parsing_time_l",
+      "operation" : "move"
+    }, {
+      "source" : "parsing",
+      "target" : "parsing_s",
+      "operation" : "move"
+    }, {
+      "source" : "Comments",
+      "target" : "comments",
+      "operation" : "move"
+    }, {
+      "source" : "resourceName",
+      "target" : "resourcename_s",
+      "operation" : "move"
+    }, {
+      "source" : "resource_name",
+      "target" : "resourcename_s",
+      "operation" : "move"
+    }, {
+      "source" : "Content-Location",
+      "target" : "url",
+      "operation" : "move"
+    }, {
+      "source" : "meta:character-count",
+      "target" : "character-count_i",
+      "operation" : "move"
+    }, {
+      "source" : "Word-Count",
+      "target" : "wordCount_i",
+      "operation" : "move"
+    }, {
+      "source" : "type",
+      "target" : "type_s",
+      "operation" : "move"
+    }, {
+      "source" : "X-Parsed-By",
+      "target" : "xParsedBy_ss",
+      "operation" : "move"
+    }, {
+      "source" : "body.links.anchor",
+      "target" : "body_links_anchor_ss",
+      "operation" : "move"
+    }, {
+      "source" : "body.links.params.alt",
+      "target" : "body_links_params_alt_ss",
+      "operation" : "move"
+    }, {
+      "source" : "body.links.params.type",
+      "target" : "body_links_params_type_ss",
+      "operation" : "move"
+    }, {
+      "source" : "body.links.title",
+      "target" : "body_links_title_ss",
+      "operation" : "move"
+    }, {
+      "source" : "body.links.targetUri",
+      "target" : "body_links_targetUri_ss",
+      "operation" : "move"
+    }, {
+      "source" : "/(.*)_[isltbfd]s?/",
+      "operation" : "keep"
+    }, {
+      "source" : "/(.*)_txt/",
+      "operation" : "keep"
+    }, {
+      "source" : "/(.*)_en/",
+      "operation" : "keep"
+    }, {
+      "source" : "/(.*)_dts?/",
+      "operation" : "keep"
+    }, {
+      "source" : "/(.*)_t[ilfd]/",
+      "operation" : "keep"
+    }, {
+      "source" : "/(.*)_p/",
+      "operation" : "keep"
+    }, {
+      "source" : "/(.*)_c/",
+      "operation" : "keep"
+    }, {
+      "source" : "/(.*)_coordinate/",
+      "operation" : "keep"
+    }, {
+      "source" : "/attr_(.*)/",
+      "operation" : "keep"
+    }, {
+      "source" : "/random_(.*)/",
+      "operation" : "keep"
+    }, {
+      "source" : "/ignored_(.*)/",
+      "operation" : "keep"
+    } ],
+    "skip" : false,
+    "label" : "field-mapping",
+    "type" : "field-mapping"
+  }, {
+    "type" : "regex-extractor",
+    "id" : "vuzq6w29",
+    "rules" : [ {
+      "source" : [ "parent_s" ],
+      "target" : "newsgroup_s",
+      "pattern" : "^/(.+/)*(.+)/$",
+      "group" : 2
+    } ],
+    "skip" : false,
+    "label" : "regex-extractor",
+    "type" : "regex-extractor"
+  }, {
+    "type" : "lang-detect",
+    "id" : "conn_language_detection",
+    "source" : [ "content", "title" ],
+    "outputType" : "document",
+    "outputKey" : "languages",
+    "documentPostfix" : "_lang",
+    "skip" : false,
+    "label" : "lang-detect",
+    "type" : "lang-detect"
+  }, {
+    "type" : "machine-learning",
+    "id" : "4lrp0ljxa39olmcxr",
+    "modelId" : "ml20news",
+    "predictionFieldName" : "the_newsgroup_s",
+    "failOnError" : false,
+    "storeInContext" : false,
+    "includeRawPredictions" : false,
+    "type" : "machine-learning",
+    "skip" : false,
+    "label" : "newsgroup_classifier"
+  }, {
+    "type" : "solr-index",
+    "id" : "solr-default",
+    "enforceSchema" : true,
+    "bufferDocsForSolr" : false,
+    "unmapped" : {
+      "source" : "/(^.*)$/",
+      "target" : "$1_txt",
+      "operation" : "move"
+    },
+    "skip" : false,
+    "label" : "solr-index",
+    "type" : "solr-index"
+  } ]
+}

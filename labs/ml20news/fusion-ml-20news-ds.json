@@ -1,0 +1,86 @@
+{
+  "id" : "crawl-20news-18828",
+  "created" : "2016-03-17T19:52:16.460Z",
+  "modified" : "2016-03-17T19:52:16.460Z",
+  "connector" : "lucid.anda",
+  "type" : "file",
+  "pipeline" : "ml20news-default",
+  "properties" : {
+    "refreshOlderThan" : -1,
+    "emitThreads" : 5,
+    "diagnosticMode" : false,
+    "refreshErrors" : false,
+    "dedupeSaveSignature" : false,
+    "crawlDBType" : "in-memory",
+    "delete" : true,
+    "initial_mapping" : {
+      "mappings" : [ {
+        "source" : "charSet",
+        "target" : "charSet_s",
+        "operation" : "move"
+      }, {
+        "source" : "fetchedDate",
+        "target" : "fetchedDate_dt",
+        "operation" : "move"
+      }, {
+        "source" : "lastModified",
+        "target" : "lastModified_dt",
+        "operation" : "move"
+      }, {
+        "source" : "signature",
+        "target" : "dedupeSignature_s",
+        "operation" : "move"
+      }, {
+        "source" : "contentSignature",
+        "target" : "signature_s",
+        "operation" : "move"
+      }, {
+        "source" : "length",
+        "target" : "length_l",
+        "operation" : "move"
+      }, {
+        "source" : "mimeType",
+        "target" : "mimeType_s",
+        "operation" : "move"
+      }, {
+        "source" : "parent",
+        "target" : "parent_s",
+        "operation" : "move"
+      }, {
+        "source" : "owner",
+        "target" : "owner_s",
+        "operation" : "move"
+      }, {
+        "source" : "group",
+        "target" : "group_s",
+        "operation" : "move"
+      } ],
+      "skip" : false,
+      "id" : "Anda",
+      "label" : "field-mapping",
+      "reservedFieldsMappingAllowed" : false
+    },
+    "fetchDelayMS" : 0,
+    "splitArchives" : true,
+    "refreshAll" : true,
+    "failFastOnStartLinkFailure" : true,
+    "startLinks" : [ "/Users/timpotter/dev/lw/sstk-local/fusion-ml/20news-18828" ],
+    "f.minSizeBytes" : 0,
+    "maxItems" : -1,
+    "chunkSize" : 50,
+    "dedupe" : false,
+    "collection" : "ml20news",
+    "deleteErrorsAfter" : -1,
+    "retryEmit" : true,
+    "forceRefresh" : false,
+    "depth" : -1,
+    "refreshStartLinks" : false,
+    "f.maxSizeBytes" : 4194304,
+    "f.addFileMetadata" : true,
+    "aliasExpiration" : 1,
+    "indexCrawlDBToSolr" : false,
+    "fetchThreads" : 5,
+    "restrictToTree" : true,
+    "retainOutlinks" : true
+  }
+}

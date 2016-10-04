@@ -1,0 +1,11 @@
+{
+  "name": "ratings",
+  "assetType": "table",
+  "projectId": "movielens",
+  "description": "movie ratings data",
+  "tags": ["movies"],
+  "format": "solr",
+  "cacheOnLoad": true,
+  "version": 2,
+  "options": ["collection -> movielens_ratings", "fields -> user_id,movie_id,rating,rating_timestamp"]
+}

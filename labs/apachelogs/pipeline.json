@@ -1,0 +1,27 @@
+{
+  "id" : "apachelogs",
+  "stages" : [ {
+    "type" : "field-mapping",
+    "id" : "mapping-default",
+    "mappings" : [ {
+      "source" : "/(.*?)lat(itude)?$/",
+      "target" : "$1_lat_lon",
+      "operation" : "move"
+    }, {
+      "source" : "/(.*?)lon(gitude)?$/",
+      "target" : "$1_lat_lon",
+      "operation" : "move"
+    } ],
+    "skip" : false,
+    "label" : "field-mapping",
+    "type" : "field-mapping"
+  }, {
+    "type" : "solr-index",
+    "id" : "c9c1cbeb-b1a7-4388-a6a5-1debce0ed4c7",
+    "enforceSchema" : true,
+    "bufferDocsForSolr" : true,
+    "skip" : false,
+    "label" : "solr-index",
+    "type" : "solr-index"
+  } ]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "movies",
+  "assetType": "table",
+  "projectId": "movielens",
+  "description": "movie user data",
+  "tags": ["movies","movies"],
+  "format": "solr",
+  "cacheOnLoad": true,
+  "options": ["collection -> movielens_movies"]
+}
