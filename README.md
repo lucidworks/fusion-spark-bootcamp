@@ -4,6 +4,7 @@ Fusion Spark Bootcamp
 This project contains examples and labs for learning how to use Fusion's Spark features.
 
 * apachelogs: Run a custom script job in Scala that performs sessionization (using a SQL window function) and then computes some aggregations for each user session
+* eventsim: Index simulated event data (from https://github.com/Interana/eventsim) using Fusion index pipelines and time-based partitioning
 * mlsvm: Classify sentiment of tweets using SVM model trained with Spark MLlib
 * ml20news: 20 newsgroup classifier based on Spark ML pipeline
 * movielens: Scala script to load movielens data into Fusion
@@ -39,6 +40,23 @@ When the job finishes, check the aggregated results in the apachelogs_signals_ag
 ```
 curl "http://localhost:8983/solr/apachelogs_signals_aggr/update?commit=true"
 ```
+
+## eventsim
+
+Clone the spark-solr project from github:
+
+```
+git clone https://github.com/lucidworks/spark-solr.git
+````
+
+Run `mvn package -DskipTests`
+
+Set the location of the spark-solr directory in the `myenv.sh` script, e.g.
+
+```
+SPARK_SOLR_HOME=/Users/timpotter/dev/lw/projects/spark-solr
+```
+Run the `labs/eventsim/setup_eventsim.sh` script to create the Fusion objects needed to support this lab.
 
 ## ml20news
 

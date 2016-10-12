@@ -1,4 +1,4 @@
-val zkhost = "localhost:9983/lwfusion/3.0-SNAPSHOT/solr"
+val zkhost = "localhost:9983/lwfusion/3.0.0/solr"
 val dataDir = "/Users/timpotter/dev/lw/sstk-local/movielens/ml-100k"
 
 sqlContext.udf.register("toInt", (str: String) => str.toInt)
