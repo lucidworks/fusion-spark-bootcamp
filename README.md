@@ -105,3 +105,22 @@ Test the Catalog API endpoint by executing the following request:
 curl -XPOST -H "Content-Type:application/json" --data-binary @join.sql http://localhost:8765/api/v1/catalog/movielens/query
 ```
 _NOTE: It make take a few seconds the first time you run a query for Spark to distribute the Fusion shaded JAR to worker processes._
+
+## expedia
+
+This lab requires Fusion 3.0 or later, and the setup process is the same as _movielens_ lab above.
+
+For this lab, you need to download the Kaggle Expedia Hotel Recommendations Dataset found at: https://www.kaggle.com/c/expedia-hotel-recommendations/data. After downloading the gzip files, extract them locally and take note of the directory, such as /tmp/expedia.
+
+To setup the lab, follow these steps (refer to _movielens_ lab for more details):
+
+* Run the `labs/expedia/setup_expedia.sh` script to create collections and catalog objects in Fusion.
+* Edit the `labs/expedia/load_solr.scala` to set the correct zkhost and dataDir variables in the script.
+* Launch the spark-shell in Fusion.
+* Copy and paste the contents of `load_solr.scala` into the spark-shell.
+* `ctrl-d` to run the Scala script.
+* Exit the spark-shell and start the SQL engine.
+* Test the Catalog API endpoint by executing the following request:
+```
+curl -XPOST -H "Content-Type:application/json" -d '{"sql": "SELECT * FROM test LIMIT 10"}' http://localhost:8765/api/v1/catalog/expedia/query
+```
