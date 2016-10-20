@@ -1,0 +1,10 @@
+{
+  "name": "train",
+  "assetType": "table",
+  "projectId": "expedia",
+  "description": "train data",
+  "tags": ["train","hotels"],
+  "format": "solr",
+  "cacheOnLoad": true,
+  "options": ["collection -> expedia_train"]
+}
