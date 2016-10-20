@@ -1,6 +1,5 @@
 val zkhost = "localhost:9983"
-//val dataDir = "/Users/timpotter/dev/lw/sstk-local/expedia"
-val dataDir = "/Users/neo/Desktop/kaggle_expedia_dataset"
+val dataDir = "/Users/timpotter/dev/lw/sstk-local/expedia"
 
 sqlContext.udf.register("toInt", (str: String) => str.toInt)
 
