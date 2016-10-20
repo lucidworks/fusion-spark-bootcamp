@@ -1,0 +1,28 @@
+{
+  "id" : "eventsim-default",
+  "stages" : [ {
+    "type" : "field-mapping",
+    "id" : "mapping-default",
+    "mappings" : [ {
+      "source" : "/(.*?)lat(itude)?$/",
+      "target" : "$1_lat_lon",
+      "operation" : "move"
+    }, {
+      "source" : "/(.*?)lon(gitude)?$/",
+      "target" : "$1_lat_lon",
+      "operation" : "move"
+    } ],
+    "skip" : false,
+    "label" : "field-mapping"
+  }, {
+    "type" : "solr-index",
+    "id" : "077892f1-cd8c-437d-84ab-50eacb2a366a",
+    "enforceSchema" : true,
+    "dateFormats" : [ ],
+    "params" : [ ],
+    "bufferDocsForSolr" : true,
+    "skip" : false,
+    "label" : "solr-index"
+  } ],
+  "properties" : { }
+}

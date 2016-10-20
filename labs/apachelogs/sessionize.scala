@@ -1,4 +1,7 @@
-val opts = Map(
+import org.apache.spark.sql.SQLContext
+val sqlContext: SQLContext = ???
+
+val readFromSolrOpts = Map(
   "zkhost" -> "localhost:9983",
   "collection" -> "apachelogs",
   "query" -> "+clientip:[* TO *] +ts:[* TO *] +bytes:[* TO *] +verb:[* TO *] +response:[* TO *]",
@@ -6,7 +9,8 @@ val opts = Map(
   "splits_per_shard" -> "4",
   "fields" -> "id,_version_,clientip,ts,bytes,response,verb")
 
-var logEvents = sqlContext.read.format("solr").options(opts).load
+
+var logEvents = sqlContext.read.format("solr").options(readFromSolrOpts).load
 logEvents.cache()
 logEvents.registerTempTable("logs")
 
@@ -22,7 +26,6 @@ val sessions = sqlContext.sql(
   """.stripMargin)
 sessions.registerTempTable("sessions")
 sessions.cache()
-//sessions.select("clientip", "session_id", "ts").show(100)
 
 var sessionsAgg = sqlContext.sql(
   """
@@ -37,4 +40,5 @@ var sessionsAgg = sqlContext.sql(
         |GROUP BY clientip,session_id
   """.stripMargin)
 
-sessionsAgg.write.format("solr").options(Map("zkhost" -> "localhost:9983", "collection" -> "apachelogs_signals_aggr")).mode(org.apache.spark.sql.SaveMode.Overwrite).save
+val writeToSolrOpts = Map("zkhost" -> "localhost:9983", "collection" -> "apachelogs_signals_aggr")
+sessionsAgg.write.format("solr").options(writeToSolrOpts).mode(org.apache.spark.sql.SaveMode.Overwrite).save
