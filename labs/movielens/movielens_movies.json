@@ -6,5 +6,5 @@
   "tags": ["movies","movies"],
   "format": "solr",
   "cacheOnLoad": false,
-  "options": ["collection -> movielens_movies"]
+  "options": ["collection -> movielens_movies","fields -> movie_id,title,release_date,imdb_url,genre,year,actor,director,language,rated,plot_txt_en"]
 }
