@@ -5,6 +5,6 @@
   "description": "movie user data",
   "tags": ["movies","movies"],
   "format": "solr",
-  "cacheOnLoad": true,
+  "cacheOnLoad": false,
   "options": ["collection -> movielens_movies"]
 }

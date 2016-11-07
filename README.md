@@ -8,6 +8,7 @@ This project contains examples and labs for learning how to use Fusion's Spark f
 * mlsvm: Classify sentiment of tweets using SVM model trained with Spark MLlib
 * ml20news: 20 newsgroup classifier based on Spark ML pipeline
 * movielens: Scala script to load movielens data into Fusion
+* nyc_taxi: Scala script to load NYC taxi trip data stored in Postgres into Solr using JDBC
 
 ## Setup
 
@@ -114,8 +115,10 @@ Alternatively, you can just use the admin user by doing:
 
 ```
 curl -u admin:password123 -H 'Content-type:application/json' -X PUT -d 'admin' "http://localhost:8764/api/apollo/configurations/catalog.jdbc.user"
-curl -u admin:password123 -H 'Content-type:application/json' -X PUT -d 'password123' "http://localhost:8764/api/apollo/configurations/catalog.jdbc.pass?secret=true"
+curl -u admin:password123 -H 'Content-type:application/json' -X PUT -d '********' "http://localhost:8764/api/apollo/configurations/catalog.jdbc.pass?secret=true"
 ```
+
+_replace `*******` with the correct password_
 
 Test the Catalog API endpoint by executing the following request:
 
@@ -123,3 +126,25 @@ Test the Catalog API endpoint by executing the following request:
 curl -XPOST -H "Content-Type:application/json" --data-binary @join.sql http://localhost:8765/api/v1/catalog/movielens/query
 ```
 _NOTE: It make take a few seconds the first time you run a query for Spark to distribute the Fusion shaded JAR to worker processes._
+
+## nyc_taxi
+
+This lab requires Fusion 3.0 or later.
+
+For this lab, you'll need a Postgres DB populated with NYC taxi trip data using the tools provided by:
+https://github.com/toddwschneider/nyc-taxi-data
+
+After building the Postgres database, run the `setup_taxi.sh` script.
+
+You'll also need to add the Postgres JDBC driver to the Fusion Spark classpath by adding the following properties to:
+
+`$FUSION_HOME/apps/spark-dist/conf/spark-defaults.conf`:
+
+```
+spark.driver.extraClassPath=/Users/timpotter/dev/lw/sstk-local/nyc_taxi/postgresql-9.4.1208.jar
+spark.executor.extraClassPath=/Users/timpotter/dev/lw/sstk-local/nyc_taxi/postgresql-9.4.1208.jar
+```
+
+Once your database is populated, you can load Fusion from the database using the `load_solr.scala` script provided with this lab.
+Be sure to update the JDBC URL in the scala script to match your Postgres DB.
+

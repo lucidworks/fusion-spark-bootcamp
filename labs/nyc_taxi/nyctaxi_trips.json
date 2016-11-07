@@ -1,0 +1,11 @@
+{
+  "name": "trips",
+  "assetType": "table",
+  "projectId": "nyctaxi",
+  "description": "NYC taxi trip data",
+  "tags": ["taxi","trips"],
+  "format": "solr",
+  "cacheOnLoad": false,
+  "version": 2,
+  "options": ["collection -> nyc_taxi"]
+}
