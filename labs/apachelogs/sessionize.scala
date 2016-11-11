@@ -1,8 +1,6 @@
-import org.apache.spark.sql.SQLContext
-val sqlContext: SQLContext = ???
-
+val zkhost = "localhost:9983/lwfusion/3.0.0/solr"
 val readFromSolrOpts = Map(
-  "zkhost" -> "localhost:9983",
+  "zkhost" -> zkhost,
   "collection" -> "apachelogs",
   "query" -> "+clientip:[* TO *] +ts:[* TO *] +bytes:[* TO *] +verb:[* TO *] +response:[* TO *]",
   "split_field" -> "_version_",
@@ -40,5 +38,5 @@ var sessionsAgg = sqlContext.sql(
         |GROUP BY clientip,session_id
   """.stripMargin)
 
-val writeToSolrOpts = Map("zkhost" -> "localhost:9983", "collection" -> "apachelogs_signals_aggr")
+val writeToSolrOpts = Map("zkhost" -> zkhost, "collection" -> "apachelogs_signals_aggr")
 sessionsAgg.write.format("solr").options(writeToSolrOpts).mode(org.apache.spark.sql.SaveMode.Overwrite).save
