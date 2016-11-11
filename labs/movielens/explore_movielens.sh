@@ -77,7 +77,7 @@ curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/geo/assets/us_zipcodes"
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/geo/assets/us_zipcodes/schema"
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/geo/assets/us_zipcodes/count"
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/geo/assets/us_zipcodes/rows"
-curl -u $FUSION_USER:$FUSION_PASS '$FUSION_API/catalog/geo/assets/us_zipcodes/columns/geo_location_rpt?facet.heatmap.geom=%5B"-126+23"+TO+"-67+51"%5d&facet.heatmap.gridLevel=3'
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/geo/assets/us_zipcodes/columns/geo_location_rpt?facet.heatmap.geom=%5B%22-126+23%22+TO+%22-67+51%22%5d&facet.heatmap.gridLevel=3"
 
 # create a view of joined users and us_zipcodes
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" -d '{
