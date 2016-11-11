@@ -35,10 +35,11 @@ curl -X POST -H "Content-type:application/json" --data-binary '{
     { "name":"vendor_id", "type":"string", "stored":true, "indexed":true, "multiValued":false, "docValues":true },
     { "name":"pickup_datetime", "type":"tdate", "stored":true, "indexed":true, "multiValued":false, "docValues":true },
     { "name":"dropoff_datetime", "type":"tdate", "stored":true, "indexed":true, "multiValued":false, "docValues":true },
+    { "name":"trip_duration_secs", "type":"tint", "stored":true, "indexed":true, "multiValued":false, "docValues":true },
     { "name":"store_and_fwd_flag", "type":"string", "stored":true, "indexed":true, "multiValued":false },
     { "name":"rate_code_id", "type":"string", "stored":true, "indexed":true, "multiValued":false, "docValues":true },
-    { "name":"pickup", "type":"location", "stored":true, "indexed":true, "multiValued":false, "docValues":false },
-    { "name":"dropoff", "type":"location", "stored":true, "indexed":true, "multiValued":false, "docValues":false },
+    { "name":"pickup", "type":"location_rpt", "stored":true, "indexed":true, "multiValued":false, "docValues":false },
+    { "name":"dropoff", "type":"location_rpt", "stored":true, "indexed":true, "multiValued":false, "docValues":false },
     { "name":"passenger_count", "type":"tint", "stored":true, "indexed":true, "multiValued":false, "docValues":true },
     { "name":"trip_distance", "type":"tdouble", "stored":true, "indexed":true, "multiValued":false, "docValues":true },
     { "name":"fare_amount", "type":"tdouble", "stored":true, "indexed":true, "multiValued":false, "docValues":true },
@@ -62,11 +63,8 @@ curl -XPOST -H "Content-type:application/json" -d '{
 }' http://$FUSION_SOLR/solr/$COLLECTION/config
 
 echo -e "\nCreating catalog objects"
-curl -u $FUSION_USER:$FUSION_PASS -XDELETE "$FUSION_API/catalog/nyctaxi"
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" --data-binary @nyctaxi.json \
   "$FUSION_API/catalog"
-
-curl -u $FUSION_USER:$FUSION_PASS -XDELETE "$FUSION_API/catalog/nyctaxi/assets/ratings"
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" --data-binary @nyctaxi_trips.json \
   "$FUSION_API/catalog/nyctaxi/assets"
 
