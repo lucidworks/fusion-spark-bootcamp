@@ -173,3 +173,32 @@ curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" --da
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" --data-binary @rotten_tomatoes.sql "$FUSION_API/catalog/movielens/query"
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" --data-binary @streaming_join.json "$FUSION_API/catalog/movielens/query"
 
+curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" -d '{
+  "sql":"SELECT u.user_id as user_id, age, gender, occupation, place_name, county, state, zip_code, geo_location_rpt, title, movie_id, rating, rating_timestamp FROM minn_users u INNER JOIN movie_ratings m ON u.user_id = m.user_id",
+  "cacheResultsAs": "ratings_by_minn_users"
+}' "$FUSION_API/catalog/movielens/query"
+
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/movielens/assets/ratings_by_minn_users/schema"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/movielens/assets/ratings_by_minn_users/count"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/movielens/assets/ratings_by_minn_users/rows"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/movielens/assets/ratings_by_minn_users/columns/user_id"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/movielens/assets/ratings_by_minn_users/columns/age"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/movielens/assets/ratings_by_minn_users/columns/gender"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/movielens/assets/ratings_by_minn_users/columns/occupation"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/movielens/assets/ratings_by_minn_users/columns/place_name"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/movielens/assets/ratings_by_minn_users/columns/county"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/movielens/assets/ratings_by_minn_users/columns/state"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/movielens/assets/ratings_by_minn_users/columns/zip_code"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/movielens/assets/ratings_by_minn_users/columns/geo_location_rpt"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/movielens/assets/ratings_by_minn_users/columns/title"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/movielens/assets/ratings_by_minn_users/columns/movie_id"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/movielens/assets/ratings_by_minn_users/columns/rating"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/movielens/assets/ratings_by_minn_users/columns/rating_timestamp"
+
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/movielens/assets/ratings_by_minn_users/count?fq=gender:F"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/movielens/assets/ratings_by_minn_users/rows?fq=gender:F"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/movielens/assets/ratings_by_minn_users/columns/occupation?fq=gender:F"
+
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/movielens/assets/ratings_by_minn_users/count?fq=gender:F&fq=occupation:educator"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/movielens/assets/ratings_by_minn_users/rows?fq=gender:F&fq=occupation:educator"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/movielens/assets/ratings_by_minn_users/columns/occupation?fq=gender:F&fq=occupation:educator"
