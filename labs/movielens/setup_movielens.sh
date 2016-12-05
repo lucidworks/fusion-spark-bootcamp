@@ -23,6 +23,27 @@ fi
 
 COLLECTION=movielens
 
+# Download the movielens dataset
+THIS_LAB_DIR=`dirname "$SETUP_SCRIPT"`
+THIS_LAB_DIR=`cd "$THIS_LAB_DIR"; pwd`
+DATA_DIR=$THIS_LAB_DIR/ml-100k
+DATA_URL="http://files.grouplens.org/datasets/movielens/ml-100k.zip"
+if [ -d "$DATA_DIR" ]; then
+  echo -e "\nFound existing ml-100k data in $DATA_DIR"
+else
+  echo -e "\n$DATA_DIR directory not found ... downloading movielens ml-100k dataset from: $DATA_URL"
+  curl -O $DATA_URL
+  unzip ml-100k.zip
+  if [ -f "$DATA_DIR/u.item" ]; then
+    cp omdb_movies.json $DATA_DIR/
+    cp us_postal_codes.csv $DATA_DIR/
+    echo -e "\nSuccessfully downloaded ml-100k data to $DATA_DIR"
+  else
+    echo -e "\nDownload / extract of ml-100k.zip failed! Please download $DATA_URL manually and extract to $THIS_LAB_DIR"
+  fi
+  rm ml-100k.zip
+fi
+
 echo -e "\nCreating new Fusion collection: $COLLECTION"
 curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d '{"solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
   $FUSION_API/collections/$COLLECTION
@@ -92,5 +113,8 @@ curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" --da
 
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" --data-binary @us_zipcodes.json \
   "$FUSION_API/catalog/geo/assets"
+
+echo -e "\nLoading movielens data into Solr using Fusion's spark-shell wrapper at: $FUSION_HOME/bin/spark-shell\n"
+$FUSION_HOME/bin/spark-shell --packages com.databricks:spark-csv_2.10:1.5.0 -i load_solr.scala
 
 echo -e "\n\nSetup complete. Check the Fusion logs for more info."
