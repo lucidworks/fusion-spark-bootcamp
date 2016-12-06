@@ -79,27 +79,16 @@ To see how the model for this lab was trained, see: [SVMExample.scala](https://g
 
 This lab requires Fusion 3.0 or later.
 
-For this lab, you need to download the Movielens 100K dataset found at: http://grouplens.org/datasets/movielens/.
-After downloading the zip file, extract it locally and take note of the directory, such as /tmp/ml-100k.
-
 Run the `labs/movielens/setup_movielens.sh` script to create collections and catalog objects in Fusion.
 
-Copy the omdb_movies.json and us_postal_codes.csv files into the data directory (where you extracted the ml-100k data set). These additional data files contain location information for US zip codes and plot descriptions for movies.
+The setup script downloads the ml-100k data set from http://files.grouplens.org/datasets/movielens/ml-100k.zip and extracts it to `labs/movielens/ml-100k`.
 
-Edit the `labs/movielens/load_solr.scala` to set the correct zkhost and dataDir variables in the script. 
-Take a moment to understand the load_solr.scala script to see how it populates the movielens collections in Solr.
-
-Launch the spark-shell in Fusion by doing:
-```
-$FUSION_HOME/bin/spark-shell
-```
-
-Type `:paste` at the prompt and paste in the contents of the load_solr.scala script included with the lab.
-
-`ctrl-d` to run the Scala script.
+The setup script also invokes the Spark shell to load data into Solr, see the load_solr.scala script for more details.
 
 Exit the spark-shell and start the SQL engine service in Fusion by doing: 
+
 ```
+cd $FUSION_HOME
 bin/spark-sql-engine start
 ```
 
