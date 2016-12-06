@@ -1,0 +1,12 @@
+{
+  "name": "minn_zipcodes",
+  "assetType": "table",
+  "projectId": "geo",
+  "format": "solr",
+  "description":"zips around minn",
+  "options": [
+     "collection -> us_zipcodes", 
+     "fields -> zip_code,place_name,state,county,geo_point,geo_location,geo_location_rpt", 
+     "query -> {!geofilt sfield=geo_location pt=44.9609,-93.2642 d=50}"
+  ]
+}

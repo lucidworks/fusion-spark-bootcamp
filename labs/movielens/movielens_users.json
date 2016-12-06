@@ -6,6 +6,6 @@
   "description": "movie user data",
   "tags": ["movies","users"],
   "format": "solr",
-  "cacheOnLoad": true,
-  "options": ["collection -> movielens_users"]
+  "cacheOnLoad": false,
+  "options": ["collection -> movielens_users","fields -> user_id,age,occupation,gender,zip_code"]
 }

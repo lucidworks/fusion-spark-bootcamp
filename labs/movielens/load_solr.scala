@@ -1,4 +1,3 @@
-val zkhost = "localhost:9983/lwfusion/3.0.0/solr"
 val dataDir = "/Users/timpotter/dev/lw/sstk-local/movielens/ml-100k"
 
 sqlContext.udf.register("toInt", (str: String) => str.toInt)
@@ -7,7 +6,7 @@ var userDF = sqlContext.read.format("com.databricks.spark.csv")
                .option("delimiter","|").option("header", "false").load(s"${dataDir}/u.user")
 userDF.registerTempTable("user")
 userDF = sqlContext.sql("select C0 as user_id,toInt(C1) as age,C2 as gender,C3 as occupation,C4 as zip_code from user")
-var writeToSolrOpts = Map("zkhost" -> zkhost, "collection" -> "movielens_users", "soft_commit_secs" -> "10")
+var writeToSolrOpts = Map("collection" -> "movielens_users", "soft_commit_secs" -> "10")
 userDF.write.format("solr").options(writeToSolrOpts).save
 
 var itemDF = sqlContext.read.format("com.databricks.spark.csv")
@@ -70,7 +69,7 @@ omdbDF.registerTempTable("omdb2")
 
 itemDF.registerTempTable("movies")
 var moviesDF = sqlContext.sql("select m.*, o.year, o.actor, o.director, o.language, o.rated, o.plot_txt_en from movies m left outer join omdb2 o on m.movie_id = o.movie_id")
-writeToSolrOpts = Map("zkhost" -> zkhost, "collection" -> "movielens_movies", "soft_commit_secs" -> "10")
+writeToSolrOpts = Map("collection" -> "movielens_movies", "soft_commit_secs" -> "10")
 moviesDF.write.format("solr").options(writeToSolrOpts).save
 
 sqlContext.udf.register("secs2ts", (secs: Long) => new java.sql.Timestamp(secs*1000))
@@ -79,12 +78,12 @@ var ratingDF = sqlContext.read.format("com.databricks.spark.csv")
                   .option("delimiter","\t").option("header", "false").load(s"${dataDir}/u.data")
 ratingDF.registerTempTable("rating")
 ratingDF = sqlContext.sql("select C0 as user_id, C1 as movie_id, toInt(C2) as rating, secs2ts(C3) as rating_timestamp from rating")
-writeToSolrOpts = Map("zkhost" -> zkhost, "collection" -> "movielens_ratings", "soft_commit_secs" -> "10")
+writeToSolrOpts = Map("collection" -> "movielens_ratings", "soft_commit_secs" -> "10")
 ratingDF.write.format("solr").options(writeToSolrOpts).save
 
 var zipDF = sqlContext.read.format("com.databricks.spark.csv").option("header", "true").option("delimiter",",").load(s"${dataDir}/us_postal_codes.csv")
 zipDF.registerTempTable("us_postal_codes")
 zipDF = sqlContext.sql("select `Postal Code` as zip_code, `Place Name` as place_name, `State` as state, `State Abbreviation` as state_abbrv, `County` as county,`Latitude` as latitude,`Longitude` as longitude, CONCAT(Latitude,',',Longitude) as geo_point, CONCAT(Latitude,',',Longitude) as geo_location, CONCAT(Latitude,',',Longitude) as geo_location_rpt from us_postal_codes")
 zipDF = zipDF.filter("latitude >= -90 AND latitude <= 90 AND longitude >= -180 AND longitude <= 180")
-zipDF.write.format("solr").options(Map("zkhost" -> zkhost, "collection" -> "us_zipcodes")).save
+zipDF.write.format("solr").options(Map("collection" -> "us_zipcodes")).save
 
