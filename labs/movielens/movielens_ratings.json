@@ -7,5 +7,5 @@
   "format": "solr",
   "cacheOnLoad": true,
   "version": 2,
-  "options": ["collection -> movielens_ratings", "fields -> user_id,movie_id,rating,rating_timestamp"]
+  "options": ["collection -> movielens_ratings", "fields -> user_id,movie_id,rating,rating_timestamp", "solr.params -> sort=id asc"]
 }

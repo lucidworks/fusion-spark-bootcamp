@@ -7,5 +7,5 @@
   "tags": ["movies","users"],
   "format": "solr",
   "cacheOnLoad": false,
-  "options": ["collection -> movielens_users","fields -> user_id,age,occupation,gender,zip_code"]
+  "options": ["collection -> movielens_users","fields -> user_id,age,occupation,gender,zip_code", "request_handler -> /export", "solr.params -> sort=id asc"]
 }

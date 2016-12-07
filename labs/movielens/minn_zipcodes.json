@@ -7,6 +7,7 @@
   "options": [
      "collection -> us_zipcodes", 
      "fields -> zip_code,place_name,state,county,geo_point,geo_location,geo_location_rpt", 
-     "query -> {!geofilt sfield=geo_location pt=44.9609,-93.2642 d=50}"
+     "query -> {!geofilt sfield=geo_location pt=44.9609,-93.2642 d=50}",
+     "solr.params -> sort=id asc"
   ]
 }
