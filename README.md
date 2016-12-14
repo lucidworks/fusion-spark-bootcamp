@@ -12,7 +12,7 @@ This project contains examples and labs for learning how to use Fusion's Spark f
 
 ## Setup
 
-Download and install the latest version of Fusion from lucidworks.com. Take note of the location where you installed Fusion, such as /opt/lucidworks/fusion. We'll refer to this location as $FUSION_HOME hereafter.
+Download and install the latest version of Fusion 3.0.x from lucidworks.com. Take note of the location where you installed Fusion, such as `/opt/lucidworks/fusion/3.0.0`. We'll refer to this location as $FUSION_HOME hereafter.
 
 Start Fusion by doing:
 ```
@@ -24,7 +24,24 @@ Login to the Fusion Admin UI in your browser at: http://localhost:8764
 
 If this is the first time you're running Fusion, then you will be prompted to set a password for the default "admin" user.
 
-Edit the `myenv.sh` script to set environment specific variables used by lab setup scripts.
+Edit the `myenv.sh` script in this project to set environment specific variables used by lab setup scripts.
+
+The default mode of Fusion 3.0.x is to run Spark in local mode, but for these labs, we recommend starting the Fusion Spark Master and Worker processes.
+
+```
+cd $FUSION_HOME
+bin/spark-master start
+bin/spark-worker start
+```
+
+Open the Spark Master UI at http://localhost:8767 and verify the cluster is alive and has an active worker process.
+
+Lastly, please launch the Fusion Spark shell to verify all Fusion processes are configured and running correctly.
+
+```
+cd $FUSION_HOME
+bin/spark-shell
+```
 
 ## apachelogs
 
@@ -85,15 +102,31 @@ The setup script downloads the ml-100k data set from http://files.grouplens.org/
 
 The setup script also invokes the Spark shell to load data into Solr, see the load_solr.scala script for more details.
 
-Exit the spark-shell and start the SQL engine service in Fusion by doing: 
+Behind the scenes, the setup script launches the Spark shell in Fusion by doing:
 
+```
+$FUSION_HOME/bin/spark-shell --packages com.databricks:spark-csv_2.10:1.5.0 -i load_solr.scala
+```
+_Notice how we add the databricks csv data source package to the shell environment as it is needed by the load_solr.scala script._
+
+Exit the spark-shell.
+ 
+Next, we'll start the SQL engine service in Fusion. However, let's tune the resource allocation for the SQL engine so that it was a little more memory and CPU resources. Specifically, we'll give it 6 CPU cores and 2g of memory; feel free to adjust these settings for your workstation.
+ 
+```
+curl -u admin:password123 -H 'Content-type:application/json' -X PUT -d '6' "http://localhost:8764/api/apollo/configurations/fusion.sparksql.cores"
+curl -u admin:password123 -H 'Content-type:application/json' -X PUT -d '6' "http://localhost:8764/api/apollo/configurations/fusion.sparksql.executor.cores"
+curl -u admin:password123 -H 'Content-type:application/json' -X PUT -d '2g' "http://localhost:8764/api/apollo/configurations/fusion.sparksql.memory"
+curl -u admin:password123 -H 'Content-type:application/json' -X PUT -d '6' "http://localhost:8764/api/apollo/configurations/fusion.sparksql.default.shuffle.partitions"
+```
+
+Now you can start the SQL engine by doing:
 ```
 cd $FUSION_HOME
 bin/spark-sql-engine start
 ```
 
-The SQL engine enforces security using the Fusion authentication and authorization APIs. Consequently, you need to create
-a Fusion user to access the SQL engine. You should grant the following permissions to the SQL engine user:
+The SQL engine enforces security using the Fusion authentication and authorization APIs. Consequently, you need to create a Fusion user to access the SQL engine. You should grant the following permissions to the SQL engine user:
  
 ```
 GET,POST:/catalog/**
