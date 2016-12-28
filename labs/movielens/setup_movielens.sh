@@ -21,14 +21,14 @@ if [ "$FUSION_PASS" == "" ]; then
   exit 1
 fi
 
-COLLECTION=movielens
-
 # Download the movielens dataset
 THIS_LAB_DIR=`dirname "$SETUP_SCRIPT"`
 THIS_LAB_DIR=`cd "$THIS_LAB_DIR"; pwd`
 DATA_DIR=$THIS_LAB_DIR/ml-100k
 DATA_URL="http://files.grouplens.org/datasets/movielens/ml-100k.zip"
 if [ -d "$DATA_DIR" ]; then
+    cp omdb_movies.json $DATA_DIR/
+    cp us_postal_codes.csv $DATA_DIR/
   echo -e "\nFound existing ml-100k data in $DATA_DIR"
 else
   echo -e "\n$DATA_DIR directory not found ... downloading movielens ml-100k dataset from: $DATA_URL"
@@ -44,70 +44,48 @@ else
   rm ml-100k.zip
 fi
 
-echo -e "\nCreating new Fusion collection: $COLLECTION"
+echo -e "\nCreating new Fusion collection: users"
 curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d '{"solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
-  $FUSION_API/collections/$COLLECTION
+  $FUSION_API/collections/users
 
 curl -XPOST -H "Content-type:application/json" -d '{
   "set-property": { "updateHandler.autoSoftCommit.maxTime":5000 }
-}' http://$FUSION_SOLR/solr/$COLLECTION/config
+}' http://$FUSION_SOLR/solr/users/config
 
-echo -e "\nCreating new Fusion collection: movielens_users"
+echo -e "\nCreating new Fusion collection: movies"
 curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d '{"solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
-  $FUSION_API/collections/movielens_users
+  $FUSION_API/collections/movies
 
 curl -XPOST -H "Content-type:application/json" -d '{
   "set-property": { "updateHandler.autoSoftCommit.maxTime":5000 }
-}' http://$FUSION_SOLR/solr/movielens_users/config
-
-echo -e "\nCreating new Fusion collection: movielens_movies"
-curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d '{"solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
-  $FUSION_API/collections/movielens_movies
-
-curl -XPOST -H "Content-type:application/json" -d '{
-  "set-property": { "updateHandler.autoSoftCommit.maxTime":5000 }
-}' http://$FUSION_SOLR/solr/movielens_movies/config
+}' http://$FUSION_SOLR/solr/movies/config
 
 curl -X POST -H "Content-type:application/json" --data-binary '{
   "add-field": { "name":"title_txt_en", "type":"text_en", "stored":true, "indexed":true, "multiValued":false }
-}' "http://$FUSION_SOLR/solr/movielens_movies/schema?updateTimeoutSecs=20"
+}' "http://$FUSION_SOLR/solr/movies/schema?updateTimeoutSecs=20"
 
-echo -e "\nCreating new Fusion collection: movielens_ratings"
+echo -e "\nCreating new Fusion collection: ratings"
 curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d '{"solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
-  $FUSION_API/collections/movielens_ratings
+  $FUSION_API/collections/ratings
 
 curl -XPOST -H "Content-type:application/json" -d '{
   "set-property": { "updateHandler.autoSoftCommit.maxTime":5000 }
-}' http://$FUSION_SOLR/solr/movielens_ratings/config
+}' http://$FUSION_SOLR/solr/ratings/config
 
-echo -e "\nCreating new Fusion collection: us_zipcodes"
+echo -e "\nCreating new Fusion collection: zipcodes"
 curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d '{"solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
-  $FUSION_API/collections/us_zipcodes
+  $FUSION_API/collections/zipcodes
 
 curl -XPOST -H "Content-type:application/json" -d '{
   "set-property": { "updateHandler.autoSoftCommit.maxTime":5000 }
-}' http://$FUSION_SOLR/solr/us_zipcodes/config
+}' http://$FUSION_SOLR/solr/zipcodes/config
 
 curl -X POST -H "Content-type:application/json" --data-binary '{
   "add-field": { "name":"geo_location", "type":"location", "stored":true, "indexed":true, "multiValued":false },
   "add-field": { "name":"geo_location_rpt", "type":"location_rpt", "stored":true, "indexed":true, "multiValued":false }
-}' "http://$FUSION_SOLR/solr/us_zipcodes/schema?updateTimeoutSecs=20"
+}' "http://$FUSION_SOLR/solr/zipcodes/schema?updateTimeoutSecs=20"
 
 echo -e "\nCreating catalog objects"
-curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" --data-binary @movielens.json \
-  "$FUSION_API/catalog"
-
-curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" --data-binary @movielens_ratings.json \
-  "$FUSION_API/catalog/movielens/assets"
-
-curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" --data-binary @movielens_users.json \
-  "$FUSION_API/catalog/movielens/assets"
-
-curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" --data-binary @movielens_movies.json \
-  "$FUSION_API/catalog/movielens/assets"
-
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/movielens/assets"
-
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" --data-binary @geo.json \
   "$FUSION_API/catalog"
 

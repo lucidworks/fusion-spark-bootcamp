@@ -7,5 +7,5 @@
   "format": "solr",
   "cacheOnLoad": true,
   "version": 2,
-  "options": ["collection -> us_zipcodes", "fields -> zip_code,place_name,state,county,geo_point,geo_location,geo_location_rpt", "solr.params -> sort=id asc"]
+  "options": ["collection -> zipcodes", "fields -> zip_code,place_name,state,county,geo_point,geo_location,geo_location_rpt", "solr.params -> sort=id asc"]
 }

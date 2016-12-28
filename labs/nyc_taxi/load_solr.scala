@@ -14,7 +14,7 @@ val dbOpts = Map(
 )
 var jdbcDF = sqlContext.read.format("jdbc").options(dbOpts).load
 
-jdbcDF = jdbcDF.sample(false,0.2,5150)
+jdbcDF = jdbcDF.sample(false,0.1,5150)
 
 sqlContext.udf.register("pay", (str: String) => {
   str match {

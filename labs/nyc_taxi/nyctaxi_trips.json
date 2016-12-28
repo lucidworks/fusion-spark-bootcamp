@@ -6,5 +6,5 @@
   "tags": ["taxi","trips"],
   "format": "solr",
   "cacheOnLoad": false,
-  "options": ["collection -> nyc_taxi", "fields -> cab_type_id,pickup_datetime,dropoff_datetime,trip_duration_secs,rate_code_id,passenger_count,trip_distance,fare_amount,extra,mta_tax,tip_amount,tolls_amount,total_amount,payment_type,pickup,dropoff"]
+  "options": ["collection -> nyc_taxi", "fields -> cab_type_id,pickup_datetime,dropoff_datetime,trip_duration_secs,rate_code_id,passenger_count,trip_distance,fare_amount,extra,mta_tax,tip_amount,tolls_amount,total_amount,payment_type,pickup,dropoff", "solr.params -> sort=id asc"]
 }

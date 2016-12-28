@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#!/bin/bash
-
 while [ -h "$SETUP_SCRIPT" ] ; do
   ls=`ls -ld "$SETUP_SCRIPT"`
   # Drop everything prior to ->
@@ -23,21 +21,88 @@ if [ "$FUSION_PASS" == "" ]; then
   exit 1
 fi
 
-COLL=ml20news
-echo "Creating the $COLL collection in Fusion"
-curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d '{"solrParams":{"replicationFactor":1,"numShards":2,"maxShardsPerNode":2},"type":"DATA"}' $FUSION_API/collections/$COLL
+echo "Creating the ml20news collection in Fusion"
+curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d '{"solrParams":{"replicationFactor":1,"numShards":2,"maxShardsPerNode":2},"type":"DATA"}' "$FUSION_API/collections/ml20news"
 
 # Stage to extract the newsgroup label
-curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d @fusion-ml-20news-pipeline.json $FUSION_API/index-pipelines/$COLL-default
-curl -u $FUSION_USER:$FUSION_PASS -X PUT  $FUSION_API/index-pipelines/$COLL-default/refresh
+curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d @fusion-ml20news-index-pipeline.json "$FUSION_API/index-pipelines/ml20news-default"
+curl -u $FUSION_USER:$FUSION_PASS -X PUT "$FUSION_API/index-pipelines/ml20news-default/refresh"
 
 curl -X POST -H "Content-type:application/json" --data-binary '{
   "add-field": { "name":"content_txt", "type":"text_en", "stored":true, "indexed":true, "multiValued":false },
   "add-field": { "name":"subject", "type":"text_en", "stored":true, "indexed":true, "multiValued":false }
-}' "http://$FUSION_SOLR/solr/$COLL/schema?updateTimeoutSecs=20"
+}' "http://$FUSION_SOLR/solr/ml20news/schema?updateTimeoutSecs=20"
+
+# enable soft-commits
+curl -XPOST -H "Content-type:application/json" -d '{
+  "set-property": { "updateHandler.autoSoftCommit.maxTime":5000 }
+}' "http://$FUSION_SOLR/solr/ml20news/config"
+
+# Download and index the newsgroups data
+THIS_LAB_DIR=`dirname "$SETUP_SCRIPT"`
+THIS_LAB_DIR=`cd "$THIS_LAB_DIR"; pwd`
+DATA_NAME=20news-18828
+DATA_DIR=$THIS_LAB_DIR/$DATA_NAME
+DATA_URL="http://qwone.com/~jason/20Newsgroups/20news-18828.tar.gz"
+if [ -d "$DATA_DIR" ]; then
+  echo -e "\nFound existing $DATA_NAME data in $DATA_DIR"
+else
+  echo -e "\n$DATA_DIR directory not found ... \n   ... Downloading $DATA_NAME dataset from: $DATA_URL"
+  curl -O $DATA_URL
+  tar zxf 20news-18828.tar.gz
+  if [ -f "$DATA_DIR/talk.religion.misc/84570" ]; then
+    echo -e "\nSuccessfully downloaded $DATA_NAME data to $DATA_DIR"
+  else
+    echo -e "\nDownload / extract of 20news-18828.tar.gz failed! Please download $DATA_URL manually and extract to $THIS_LAB_DIR"
+  fi
+  rm 20news-18828.tar.gz
+fi
+
+# Setup a local FS crawl in Fusion to index the newsgroups data
+cp fusion-ml20news-file-crawler-config.tmpl fusion-ml20news-file-crawler-config.json
+sed -i.bak 's|DATA_DIR|'$DATA_DIR'|g' fusion-ml20news-file-crawler-config.json
+curl -u $FUSION_USER:$FUSION_PASS -X POST --data-binary @fusion-ml20news-file-crawler-config.json -H "Content-type: application/json" "$FUSION_API/connectors/datasources"
+
+# Kick-off the crawler
+echo -e "\nStarting the crawl-local-20news-18828-dir job to index data in $DATA_DIR"
+curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type: application/json" "$FUSION_API/connectors/jobs/crawl-local-20news-18828-dir"
+
+# Poll the job status until it is done ...
+echo -e "\nWill poll the crawl-local-20news-18828-dir job status for up to 3 minutes to wait for indexing to complete."
+export PYTHONIOENCODING=utf8
+sleep 10
+COUNTER=0
+MAX_LOOPS=36
+job_status="RUNNING"
+while [  $COUNTER -lt $MAX_LOOPS ]; do
+  job_status=$(curl -u $FUSION_USER:$FUSION_PASS -s "$FUSION_API/connectors/jobs/crawl-local-20news-18828-dir" | python -c "import sys, json; print json.load(sys.stdin)['state']")
+  echo "The crawl-local-20news-18828-dir job is: $job_status"
+  if [ "RUNNING" == "$job_status" ]; then
+    sleep 10
+    let COUNTER=COUNTER+1  
+  else
+    let COUNTER=999
+  fi
+done
+
+if [ "$job_status" != "FINISHED" ]; then
+  echo -e "\nThe crawl-local-20news-18828-dir job has not finished (last known state: $job_status) in over 3 minutes! Script will exit as there's likely a problem that needs to be corrected manually."
+  exit 1
+fi
+
+num_found=$(curl -u $FUSION_USER:$FUSION_PASS -s "$FUSION_API/api/apollo/solr/ml20news/select?q=*:*&rows=0&wt=json&echoParams=none" | python -c "import sys, json; print json.load(sys.stdin)['response']['numFound']")
+echo -e "\nIndexing newsgroup documents completed. Found $num_found"
+
+echo -e "\nBuilding model Fusion's spark-shell wrapper at: $FUSION_HOME/bin/spark-shell\n"
+$FUSION_HOME/bin/spark-shell -i BuildNewsgroupMLModel.scala
+
+echo -e "\nModel built and loaded into Fusion's blob store ... updating the index pipeline to use the classifier."
 
 curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/zip" --data-binary @ml-pipeline-model.zip "$FUSION_API/blobs/ml20news?modelType=com.lucidworks.spark.ml.SparkMLTransformerModel"
-curl -u $FUSION_USER:$FUSION_PASS -X PUT  $FUSION_API/index-pipelines/$COLL-default/refresh
+curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d @fusion-ml20news-index-pipeline-ml.json $FUSION_API/index-pipelines/ml20news-default
+curl -u $FUSION_USER:$FUSION_PASS -X PUT  $FUSION_API/index-pipelines/ml20news-default/refresh
+
+echo -e "\nTesting the ML model with sample documents:"
 
 curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/vnd.lucidworks-document" -d '[
   {
@@ -47,7 +112,7 @@ curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/vnd.lucid
       { "name": "content_txt", "value": "this is a doc about atheism and atheists" }
     ]
   }
-]' $FUSION_API/index-pipelines/$COLL-default/collections/$COLL/index
+]' "$FUSION_API/index-pipelines/ml20news-default/collections/ml20news/index?echo=true"
 
 curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/vnd.lucidworks-document" -d '[
   {
@@ -57,7 +122,7 @@ curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/vnd.lucid
       { "name": "content_txt", "value": "this is a doc about a game that involves pitching, catching, and homeruns" }
     ]
   }
-]' $FUSION_API/index-pipelines/$COLL-default/collections/$COLL/index
+]' "$FUSION_API/index-pipelines/ml20news-default/collections/ml20news/index?echo=true"
 
 curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/vnd.lucidworks-document" -d '[
   {
@@ -67,7 +132,7 @@ curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/vnd.lucid
       { "name": "content_txt", "value": "this is a doc about windscreens and face shields for cycles" }
     ]
   }
-]' $FUSION_API/index-pipelines/$COLL-default/collections/$COLL/index
+]' "$FUSION_API/index-pipelines/ml20news-default/collections/ml20news/index?echo=true"
 
 curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/vnd.lucidworks-document" -d '[
   {
@@ -78,5 +143,5 @@ curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/vnd.lucid
       { "name": "content_txt", "value": "this is a doc about windscreens and face shields for cycles" }
     ]
   }
-]' $FUSION_API/index-pipelines/$COLL-default/collections/$COLL/index
+]' "$FUSION_API/index-pipelines/ml20news-default/collections/ml20news/index?echo=true"
 
