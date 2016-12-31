@@ -39,7 +39,7 @@ if [ ! -f "$SPARK_SOLR_JAR" ]; then
 fi
 
 echo -e "\nCreating the $COLL collection in Fusion"
-#curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d '{"solrParams":{"numShards":3,"maxShardsPerNode":3}}' $FUSION_API/collections/$COLL
+curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d '{"solrParams":{"numShards":3,"maxShardsPerNode":3}}' $FUSION_API/collections/$COLL
 
 curl -XPOST -H "Content-type:application/json" -d '{
   "set-property": { "updateHandler.autoSoftCommit.maxTime":5000 }
