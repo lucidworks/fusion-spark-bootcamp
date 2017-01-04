@@ -1,7 +1,0 @@
-{
-  "name": "movielens",
-  "assetType": "project",
-  "description": "tables and views for the movielens project",
-  "tags": ["movies","users"],
-  "cacheOnLoad": false
-}

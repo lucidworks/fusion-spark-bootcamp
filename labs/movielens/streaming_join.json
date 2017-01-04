@@ -1,5 +1,0 @@
-{
-  "solr":"hashJoin(search(ratings, q=*:*, qt=\"/export\", fl=\"user_id,movie_id,rating\", sort=\"movie_id asc\", partitionKeys=\"movie_id\"), hashed=search(movies, q=*:*, fl=\"movie_id,title\", qt=\"/export\", sort=\"movie_id asc\",partitionKeys=\"movie_id\"),on=\"movie_id\")", 
-  "collection":"ratings",
-  "requestHandler":"/stream"
-}

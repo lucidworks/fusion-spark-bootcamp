@@ -1,7 +1,7 @@
 {
   "name": "trips",
   "assetType": "table",
-  "projectId": "nyctaxi",
+  "projectId": "fusion",
   "description": "NYC taxi trip data",
   "tags": ["taxi","trips"],
   "format": "solr",

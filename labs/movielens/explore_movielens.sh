@@ -21,9 +21,6 @@ if [ "$FUSION_PASS" == "" ]; then
   exit 1
 fi
 
-# find data assets about movies
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/_search?keyword=movies"
-
 # explore the user table
 
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/users"
@@ -68,16 +65,16 @@ curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/ratings/col
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/ratings/columns/rating_timestamp"
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/ratings/columns/rating_timestamp?start=1997-09-20T03:05:10.000Z&end=1997-12-20T03:05:10.000Z"
 
-# explore the "us_zipcodes" table
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/geo/assets/us_zipcodes"
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/geo/assets/us_zipcodes/schema"
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/geo/assets/us_zipcodes/count"
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/geo/assets/us_zipcodes/rows"
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/geo/assets/us_zipcodes/columns/geo_location_rpt?facet.heatmap.geom=%5B%22-126+23%22+TO+%22-67+51%22%5d&facet.heatmap.gridLevel=3"
+# explore the "zipcodes" table
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/zipcodes"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/zipcodes/schema"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/zipcodes/count"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/zipcodes/rows"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/zipcodes/columns/geo_location_rpt?facet.heatmap.geom=%5B%22-126+23%22+TO+%22-67+51%22%5d&facet.heatmap.gridLevel=3"
 
 # create a view of joined users and zipcodes
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" -d '{
-  "sql":"SELECT user_id, age, gender, occupation, u.zip_code, place_name, state, county, geo_location, geo_location_rpt FROM users u INNER JOIN (select place_name, state, county, geo_location, geo_location_rpt, zip_code from us_zipcodes) z ON u.zip_code = z.zip_code",
+  "sql":"SELECT user_id, age, gender, occupation, u.zip_code, place_name, state, county, geo_location, geo_location_rpt FROM users u INNER JOIN (select place_name, state, county, geo_location, geo_location_rpt, zip_code from zipcodes) z ON u.zip_code = z.zip_code",
   "cacheResultsAs": "us_user_location"
 }' "$FUSION_API/catalog/fusion/query"
 
@@ -98,13 +95,28 @@ curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/us_user_loc
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets"
 
 # the data explorer tool needs to know that any filters on geo-spatial or text fields need to be pushed into Solr
-curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" --data-binary @minn_zipcodes.json \
-  "$FUSION_API/catalog/geo/assets"
+# so the best thing to do is just define a new "view" in the catalog
+curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" "$FUSION_API/catalog/fusion/assets" --data-binary @<(cat <<EOF
+{
+  "name": "minn_zipcodes",
+  "assetType": "table",
+  "projectId": "fusion",
+  "format": "solr",
+  "description":"zips around minn",
+  "options": [
+     "collection -> zipcodes",
+     "fields -> zip_code,place_name,state,county,geo_point,geo_location,geo_location_rpt", 
+     "query -> {!geofilt sfield=geo_location pt=44.9609,-93.2642 d=50}",
+     "solr.params -> sort=id asc"
+  ]
+}
+EOF
+)
 
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/geo/assets/minn_zipcodes"
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/geo/assets/minn_zipcodes/schema"
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/geo/assets/minn_zipcodes/count"
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/geo/assets/minn_zipcodes/rows"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/minn_zipcodes"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/minn_zipcodes/schema"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/minn_zipcodes/count"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/minn_zipcodes/rows"
 
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" -d '{
   "sql":"SELECT user_id, age, gender, occupation, u.zip_code, place_name, state, county, geo_location, geo_location_rpt FROM users u INNER JOIN minn_zipcodes z ON u.zip_code = z.zip_code",
@@ -137,11 +149,49 @@ curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/movie_ratin
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/movie_ratings/count?fq=user_id:30"
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/movie_ratings/rows?fq=user_id:30"
 
-curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" --data-binary @join.sql "$FUSION_API/catalog/fusion/query"
-curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" --data-binary @love.sql "$FUSION_API/catalog/fusion/query"
-curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" --data-binary @gender.sql "$FUSION_API/catalog/fusion/query"
-curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" --data-binary @rotten_tomatoes.sql "$FUSION_API/catalog/fusion/query"
-curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" --data-binary @streaming_join.json "$FUSION_API/catalog/fusion/query"
+# fire off some custom SQL
+
+echo -e "\n\nExample: push-down subquery into Solr to compute aggregation"
+curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" "$FUSION_API/catalog/fusion/query" --data-binary @<(cat <<EOF
+{
+ "sql":"SELECT m.title as title, solr.aggCount as aggCount FROM movies m INNER JOIN (SELECT movie_id, COUNT(*) as aggCount FROM ratings WHERE rating >= 4 GROUP BY movie_id ORDER BY aggCount desc LIMIT 10) as solr ON solr.movie_id = m.movie_id ORDER BY aggCount DESC"
+}
+EOF
+)
+
+echo -e "\n\nExample: push-down subquery into Solr to find movies about love"
+curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" "$FUSION_API/catalog/fusion/query" --data-binary @<(cat <<EOF
+{
+"sql":"SELECT solr.title as title, avg(rating) as avg_rating FROM ratings INNER JOIN (select movie_id,title from movies where _query_='plot_txt_en:love') as solr ON ratings.movie_id = solr.movie_id GROUP BY title ORDER BY avg_rating DESC LIMIT 10"
+}
+EOF
+)
+
+echo -e "\n\n:Example: compute num ratings by gender using join between ratings and user table"
+curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" "$FUSION_API/catalog/fusion/query" --data-binary @<(cat <<EOF
+{
+  "sql": "SELECT u.gender as gender, COUNT(*) as aggCount FROM users u INNER JOIN ratings r ON u.user_id = r.user_id GROUP BY gender"
+}
+EOF
+)
+
+echo -e "\n\nExample: some rotten tomatoes (movies with low avg rating); aggregations computed by Solr"
+curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" "$FUSION_API/catalog/fusion/query" --data-binary @<(cat <<EOF
+{
+ "sql":"SELECT m.title as title, solr.aggAvg as aggAvg FROM movies m INNER JOIN (SELECT movie_id, COUNT(*) as num_ratings, avg(rating) as aggAvg FROM ratings GROUP BY movie_id HAVING num_ratings > 100 ORDER BY aggAvg ASC LIMIT 10) as solr ON solr.movie_id = m.movie_id ORDER BY aggAvg ASC"
+}
+EOF
+) 
+
+echo -e "\n\nExample: execute streaming expressions too"
+curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" "$FUSION_API/catalog/fusion/query" --data-binary @<(cat <<EOF
+{
+  "solr":"hashJoin(search(ratings, q=*:*, qt=\"/export\", fl=\"user_id,movie_id,rating\", sort=\"movie_id asc\", partitionKeys=\"movie_id\"), hashed=search(movies, q=*:*, fl=\"movie_id,title\", qt=\"/export\", sort=\"movie_id asc\",partitionKeys=\"movie_id\"),on=\"movie_id\")", 
+  "collection":"ratings",
+  "requestHandler":"/stream"
+}
+EOF
+)
 
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" -d '{
   "sql":"SELECT u.user_id as user_id, age, gender, occupation, place_name, county, state, zip_code, geo_location_rpt, title, movie_id, rating, rating_timestamp FROM minn_users u INNER JOIN movie_ratings m ON u.user_id = m.user_id",

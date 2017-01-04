@@ -63,9 +63,7 @@ curl -XPOST -H "Content-type:application/json" -d '{
 }' http://$FUSION_SOLR/solr/$COLLECTION/config
 
 echo -e "\nCreating catalog objects"
-curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" --data-binary @nyctaxi.json \
-  "$FUSION_API/catalog"
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" --data-binary @nyctaxi_trips.json \
-  "$FUSION_API/catalog/nyctaxi/assets"
+  "$FUSION_API/catalog/fusion/assets"
 
 echo -e "\n\nSetup complete. Check the Fusion logs for more info."

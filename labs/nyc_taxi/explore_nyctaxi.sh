@@ -21,32 +21,28 @@ if [ "$FUSION_PASS" == "" ]; then
   exit 1
 fi
 
-# find data assets about movies
+# find data assets about taxi
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/_search?keyword=taxi"
-
-curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" -d '{
-  "sql":"select * from nyctaxi"
-}' "$FUSION_API/catalog/nyctaxi/query"
 
 # explore the trips table
 
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/nyctaxi/assets/trips"
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/nyctaxi/assets/trips/schema"
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/nyctaxi/assets/trips/count"
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/nyctaxi/assets/trips/rows"
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/nyctaxi/assets/trips/columns/cab_type_id"
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/nyctaxi/assets/trips/columns/pickup_datetime"
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/nyctaxi/assets/trips/columns/dropoff_datetime"
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/nyctaxi/assets/trips/columns/trip_duration_secs"
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/nyctaxi/assets/trips/columns/rate_code_id"
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/nyctaxi/assets/trips/columns/passenger_count"
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/nyctaxi/assets/trips/columns/trip_distance"
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/nyctaxi/assets/trips/columns/fare_amount"
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/nyctaxi/assets/trips/columns/extra"
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/nyctaxi/assets/trips/columns/mta_tax"
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/nyctaxi/assets/trips/columns/tip_amount"
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/nyctaxi/assets/trips/columns/tolls_amount"
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/nyctaxi/assets/trips/columns/total_amount"
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/nyctaxi/assets/trips/columns/payment_type"
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/nyctaxi/assets/trips/columns/pickup?facet.heatmap.geom=%5B%22-73.9599+40.693%22+TO+%22-73.037+40.913%22%5d&facet.heatmap.gridLevel=5"
-curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/nyctaxi/assets/trips/columns/dropoff"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/trips"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/trips/schema"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/trips/count"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/trips/rows"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/trips/columns/cab_type_id"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/trips/columns/pickup_datetime"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/trips/columns/dropoff_datetime"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/trips/columns/trip_duration_secs"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/trips/columns/rate_code_id"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/trips/columns/passenger_count"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/trips/columns/trip_distance"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/trips/columns/fare_amount"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/trips/columns/extra"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/trips/columns/mta_tax"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/trips/columns/tip_amount"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/trips/columns/tolls_amount"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/trips/columns/total_amount"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/trips/columns/payment_type"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/trips/columns/pickup?facet.heatmap.geom=%5B%22-73.9599+40.693%22+TO+%22-73.037+40.913%22%5d&facet.heatmap.gridLevel=5"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/trips/columns/dropoff"

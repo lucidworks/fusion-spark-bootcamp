@@ -50,8 +50,6 @@ object BuildNewsgroupMLModel extends Serializable {
     val options = Map(
       "collection" -> DefaultCollection,
       "query" -> DefaultQuery,
-      "request_handler" -> "/select",
-      "splits_per_shard" -> "2",
       "fields" -> fields)
 
     println("Reading data from Solr using options: "+options)

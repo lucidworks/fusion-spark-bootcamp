@@ -1,7 +1,0 @@
-{
-  "name": "nyctaxi",
-  "assetType": "project",
-  "description": "tables and views for the NYC taxi trips project",
-  "tags": ["nyc","taxi","trips"],
-  "cacheOnLoad": false
-}
