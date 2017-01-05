@@ -96,9 +96,11 @@ To see how the model for this lab was trained, see: [SVMExample.scala](https://g
 
 This lab requires Fusion 3.0 or later.
 
-Run the `labs/movielens/setup_movielens.sh` script to create collections and catalog objects in Fusion.
+Run the `labs/movielens/setup_movielens.sh` script to create collections in Fusion and populate them using Spark.
 
 The setup script downloads the ml-100k data set from http://files.grouplens.org/datasets/movielens/ml-100k.zip and extracts it to `labs/movielens/ml-100k`.
+
+You'll need unzip installed prior to running the script.
 
 The setup script also invokes the Spark shell to load data into Solr, see the load_solr.scala script for more details.
 
@@ -109,45 +111,26 @@ $FUSION_HOME/bin/spark-shell --packages com.databricks:spark-csv_2.10:1.5.0 -i l
 ```
 _Notice how we add the databricks csv data source package to the shell environment as it is needed by the load_solr.scala script._
 
-Exit the spark-shell.
- 
-Next, we'll start the SQL engine service in Fusion. However, let's tune the resource allocation for the SQL engine so that it was a little more memory and CPU resources. Specifically, we'll give it 6 CPU cores and 2g of memory; feel free to adjust these settings for your workstation.
- 
-```
-curl -u admin:password123 -H 'Content-type:application/json' -X PUT -d '6' "http://localhost:8764/api/apollo/configurations/fusion.sparksql.cores"
-curl -u admin:password123 -H 'Content-type:application/json' -X PUT -d '6' "http://localhost:8764/api/apollo/configurations/fusion.sparksql.executor.cores"
-curl -u admin:password123 -H 'Content-type:application/json' -X PUT -d '2g' "http://localhost:8764/api/apollo/configurations/fusion.sparksql.memory"
-curl -u admin:password123 -H 'Content-type:application/json' -X PUT -d '6' "http://localhost:8764/api/apollo/configurations/fusion.sparksql.default.shuffle.partitions"
-```
-
-Now you can start the SQL engine by doing:
-```
-cd $FUSION_HOME
-bin/spark-sql-engine start
-```
-
-The SQL engine enforces security using the Fusion authentication and authorization APIs. Consequently, you need to create a Fusion user to access the SQL engine. You should grant the following permissions to the SQL engine user:
- 
-```
-GET,POST:/catalog/**
-GET:/solr/**
-```
- 
-Alternatively, you can just use the admin user by doing:
+After loading the data, the setup script will (re)start the Fusion SQL engine using:
 
 ```
-curl -u admin:password123 -H 'Content-type:application/json' -X PUT -d 'admin' "http://localhost:8764/api/apollo/configurations/catalog.jdbc.user"
-curl -u admin:password123 -H 'Content-type:application/json' -X PUT -d '********' "http://localhost:8764/api/apollo/configurations/catalog.jdbc.pass?secret=true"
+$FUSION_HOME/bin/sql restart
 ```
 
-_replace `*******` with the correct password_
+Test the Catalog API endpoint by executing the `explore_movielens.sh` script.
 
-Test the Catalog API endpoint by executing the following request:
-
-```
-curl -XPOST -H "Content-Type:application/json" --data-binary @join.sql http://localhost:8765/api/v1/catalog/movielens/query
-```
 _NOTE: It make take a few seconds the first time you run a query for Spark to distribute the Fusion shaded JAR to worker processes._
+
+You can tune the resource allocation for the SQL engine so that it has a little more memory and CPU resources. Specifically, we'll give it 6 CPU cores and 2g of memory; feel free to adjust these settings for your workstation.
+ 
+```
+curl -u admin:password123 -H 'Content-type:application/json' -X PUT -d '6' "http://localhost:8764/api/apollo/configurations/fusion.sql.cores"
+curl -u admin:password123 -H 'Content-type:application/json' -X PUT -d '6' "http://localhost:8764/api/apollo/configurations/fusion.sql.executor.cores"
+curl -u admin:password123 -H 'Content-type:application/json' -X PUT -d '2g' "http://localhost:8764/api/apollo/configurations/fusion.sql.memory"
+curl -u admin:password123 -H 'Content-type:application/json' -X PUT -d '6' "http://localhost:8764/api/apollo/configurations/fusion.sql.default.shuffle.partitions"
+```
+
+You'll need to restart the SQL engine after making these changes.
 
 ## nyc_taxi
 
