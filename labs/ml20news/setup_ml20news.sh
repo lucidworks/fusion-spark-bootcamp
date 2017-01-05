@@ -94,7 +94,7 @@ num_found=$(curl -u $FUSION_USER:$FUSION_PASS -s "$FUSION_API/api/apollo/solr/ml
 echo -e "\nIndexing newsgroup documents completed. Found $num_found"
 
 echo -e "\nBuilding model Fusion's spark-shell wrapper at: $FUSION_HOME/bin/spark-shell\n"
-$FUSION_HOME/bin/spark-shell -i BuildNewsgroupMLModel.scala
+$FUSION_HOME/bin/spark-shell -M local[*] -i BuildNewsgroupMLModel.scala
 
 echo -e "\nModel built and loaded into Fusion's blob store ... updating the index pipeline to use the classifier."
 
