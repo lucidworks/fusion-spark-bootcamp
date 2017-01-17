@@ -96,11 +96,9 @@ echo -e "\nLoading movielens data into Solr using Fusion's spark-shell wrapper a
 $FUSION_HOME/bin/spark-shell -M local[*] --packages com.databricks:spark-csv_2.10:1.5.0 -i load_solr.scala
 
 echo -e "\nStarting the SQL engine"
-curl -u $FUSION_USER:$FUSION_PASS -H 'Content-type:application/json' -X PUT -d ''"$FUSION_USER"'' "$FUSION_API/configurations/catalog.jdbc.user"
-curl -u $FUSION_USER:$FUSION_PASS -H 'Content-type:application/json' -X PUT -d ''"$FUSION_PASS"'' "$FUSION_API/configurations/catalog.jdbc.pass?secret=true"
 curl -u $FUSION_USER:$FUSION_PASS -H 'Content-type:application/json' -X PUT -d '4' "$FUSION_API/configurations/fusion.sql.cores"
 curl -u $FUSION_USER:$FUSION_PASS -H 'Content-type:application/json' -X PUT -d '4' "$FUSION_API/configurations/fusion.sql.executor.cores"
-curl -u $FUSION_USER:$FUSION_PASS -H 'Content-type:application/json' -X PUT -d '2g' "$FUSION_API/configurations/fusion.sql.memory"
+curl -u $FUSION_USER:$FUSION_PASS -H 'Content-type:application/json' -X PUT -d '1g' "$FUSION_API/configurations/fusion.sql.memory"
 curl -u $FUSION_USER:$FUSION_PASS -H 'Content-type:application/json' -X PUT -d '4' "$FUSION_API/configurations/fusion.sql.default.shuffle.partitions"
 
 $FUSION_HOME/bin/sql restart

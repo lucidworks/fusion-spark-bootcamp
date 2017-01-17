@@ -21,7 +21,26 @@ if [ "$FUSION_PASS" == "" ]; then
   exit 1
 fi
 
+echo -e "\n\nshow tables"
+curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" "$FUSION_API/catalog/fusion/query" --data-binary @<(cat <<EOF
+{
+ "sql":"show tables"
+}
+EOF
+)
+
+echo -e "\nshow tables with like clause"
+
+curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" "$FUSION_API/catalog/fusion/query" --data-binary @<(cat <<EOF
+{
+ "sql":"show tables in \`default\` like \`zip\`"
+}
+EOF
+)
+
 # explore the user table
+
+echo -e "\nexplore the user table"
 
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/users"
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/users/schema"
@@ -32,7 +51,17 @@ curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/users/colum
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/users/columns/age"
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/users/columns/zip_code"
 
+echo -e "\nExample: count all users, should by-pass SQL engine and go direct to solr"
+curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" "$FUSION_API/catalog/fusion/query" --data-binary @<(cat <<EOF
+{
+  "sql":"select count(1) from users"
+}
+EOF
+)
+
 # explore the movies table
+
+echo -e "\nexplore the movies table"
 
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/movies"
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/movies/schema"
@@ -198,9 +227,43 @@ curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" -d '
   "cacheResultsAs": "ratings_by_minn_users"
 }' "$FUSION_API/catalog/fusion/query"
 
+echo -e "\n\nExample: where in with Solr full-text query"
+curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" "$FUSION_API/catalog/fusion/query" --data-binary @<(cat <<EOF
+{
+ "sql":"select movie_id, count(*) as num_ratings from ratings where movie_id IN (select movie_id from movies where _query_='plot_txt_en:dogs') group by movie_id order by num_ratings desc limit 100"
+}
+EOF
+)
+
+echo -e "\n\nExample: join with geo-filter push-down query"
+curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" "$FUSION_API/catalog/fusion/query" --data-binary @<(cat <<EOF
+{ 
+  "sql":"SELECT solr.place_name, count(*) as cnt FROM users u INNER JOIN (select place_name,zip_code from zipcodes where _query_='{!geofilt sfield=geo_location pt=44.9609,-93.2642 d=50}') as solr ON solr.zip_code = u.zip_code WHERE u.gender='F' GROUP BY solr.place_name"
+}
+EOF
+)
+
+echo -e "\nExample: where in with sub-query"
+curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" "$FUSION_API/catalog/fusion/query" --data-binary @<(cat <<EOF
+{
+  "sql":"select movie_id, count(*) as num_ratings from ratings where movie_id IN (select movie_id from movies where _query_='plot_txt_en:love') group by movie_id order by num_ratings desc limit 100"
+}
+EOF
+)
+
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/ratings_by_minn_users/schema"
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/ratings_by_minn_users/count"
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/ratings_by_minn_users/rows"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/ratings_by_minn_users/rows?sample=0.1:2121"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/ratings_by_minn_users/rows?sample=0.2"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/ratings_by_minn_users/rows?rows=*"
+
+curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" "$FUSION_API/catalog/fusion/query" --data-binary @<(cat <<EOF
+{
+  "sql":"cache table ratings_by_minn_users"
+}
+EOF
+)
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/ratings_by_minn_users/columns/user_id"
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/ratings_by_minn_users/columns/age"
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/ratings_by_minn_users/columns/gender"
@@ -222,3 +285,45 @@ curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/ratings_by_
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/ratings_by_minn_users/count?fq=gender:F&fq=occupation:educator"
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/ratings_by_minn_users/rows?fq=gender:F&fq=occupation:educator"
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/ratings_by_minn_users/columns/occupation?fq=gender:F&fq=occupation:educator"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/ratings_by_minn_users/rows?sample=0.2&fq=gender:M&sort=age"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/ratings_by_minn_users/rows?sample=0.2"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/ratings_by_minn_users/rows?sample=0.2:2121"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/ratings_by_minn_users/rows?rows=25"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/ratings_by_minn_users/count?sample=0.2"
+
+curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" "$FUSION_API/catalog/fusion/query" --data-binary @<(cat <<EOF
+{
+  "sql":"uncache table ratings_by_minn_users"
+}
+EOF
+)
+
+echo -e "\n\nExample: execute Solr query thru Catalog API"
+curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" "$FUSION_API/catalog/fusion/query" --data-binary @<(cat <<EOF
+{
+  "solr":"*:*",
+  "requestHandler":"/select",
+  "collection":"users"
+}
+EOF
+)
+
+echo -e "\n\nExample: streaming select"
+curl -XPOST -H "Content-Type:application/json" "http://localhost:8765/api/v1/catalog/fusion/query" --data-binary @<(cat <<EOF
+{
+  "solr":"select(facet(ratings, q=\"*:*\", buckets=\"rating\", bucketSorts=\"count(*) desc\", bucketSizeLimit=100, count(*), sum(rating), min(rating), max(rating), avg(rating)),rating,count(*) as the_count,avg(rating) as the_avg,replace(rating,5,withValue=excellent),replace(rating,4,withValue=good),replace(rating,3,withValue=avg),replace(rating,2,withValue=poor),replace(rating,1,withValue=awful))",
+  "requestHandler":"/stream",
+  "collection":"ratings"
+}
+EOF
+)
+
+
+echo -e "\n\nshow tables"
+curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" "$FUSION_API/catalog/fusion/query" --data-binary @<(cat <<EOF
+{
+ "sql":"show tables"
+}
+EOF
+)
+
