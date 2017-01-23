@@ -25,28 +25,39 @@ fi
 
 COLL=eventsim
 
-if [ "$SPARK_SOLR_HOME" == ""  ]; then
-  echo -e "Please clone the spark-solr project from github and set the SPARK_SOLR_HOME variable in myenv.sh before running this script."
-  exit 1
-fi
-
-SPARK_SOLR_JAR=$(find $SPARK_SOLR_HOME/target -name "spark-solr-*-shaded.jar")
-echo -e "SPARK_SOLR_JAR= $SPARK_SOLR_JAR"
-
-if [ ! -f "$SPARK_SOLR_JAR" ]; then
-  echo -e "ERROR: Please build the spark-solr JAR using maven before running this script."
-  exit 1
-fi
-
 echo -e "\nCreating the $COLL collection in Fusion"
 curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d '{"solrParams":{"numShards":3,"maxShardsPerNode":3}}' $FUSION_API/collections/$COLL
+
+curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d @eventsim-default-index-pipeline.json "$FUSION_API/index-pipelines/eventsim-default"
+curl -u $FUSION_USER:$FUSION_PASS -X PUT "$FUSION_API/index-pipelines/eventsim-default/refresh"
+
+curl -X POST -H "Content-type:application/json" --data-binary '{
+  "add-field": { "name":"ts", "type":"tdate", "stored":true, "indexed":true, "multiValued":false },
+  "add-field": { "name":"registration", "type":"tdate", "stored":true, "indexed":true, "multiValued":false },
+  "add-field": { "name":"song", "type":"string", "stored":true, "indexed":true, "multiValued":false },
+  "add-field": { "name":"lastName", "type":"string", "stored":true, "indexed":true, "multiValued":false },
+  "add-field": { "name":"artist", "type":"string", "stored":true, "indexed":true, "multiValued":false },
+  "add-field": { "name":"auth", "type":"string", "stored":true, "indexed":true, "multiValued":false },
+  "add-field": { "name":"firstName", "type":"string", "stored":true, "indexed":true, "multiValued":false },
+  "add-field": { "name":"location", "type":"string", "stored":true, "indexed":true, "multiValued":false },
+  "add-field": { "name":"page", "type":"string", "stored":true, "indexed":true, "multiValued":false },
+  "add-field": { "name":"itemInSession", "type":"string", "stored":true, "indexed":true, "multiValued":false },
+  "add-field": { "name":"gender", "type":"string", "stored":true, "indexed":true, "multiValued":false },
+  "add-field": { "name":"method", "type":"string", "stored":true, "indexed":true, "multiValued":false },
+  "add-field": { "name":"level", "type":"string", "stored":true, "indexed":true, "multiValued":false },
+  "add-field": { "name":"length", "type":"tdouble", "stored":true, "indexed":true, "multiValued":false },
+  "add-field": { "name":"userId", "type":"string", "stored":true, "indexed":true, "multiValued":false },
+  "add-field": { "name":"status", "type":"tint", "stored":true, "indexed":true, "multiValued":false },
+  "add-field": { "name":"sessionId", "type":"string", "stored":true, "indexed":true, "multiValued":false },
+  "add-copy-field": [ { "source": "*", "dest": "_text_" } ]
+}' "http://$FUSION_SOLR/solr/eventsim/schema?updateTimeoutSecs=20"
 
 curl -XPOST -H "Content-type:application/json" -d '{
   "set-property": { "updateHandler.autoSoftCommit.maxTime":5000 }
 }' http://$FUSION_SOLR/solr/eventsim/config
 
 echo -e "\nEnabling the partitionByTime feature in Fusion"
-#curl -u $FUSION_USER:$FUSION_PASS -X PUT -H 'Content-type: application/json' -d '{ "enabled":true, "timestampFieldName":"ts", "timePeriod":"1DAYS", "scheduleIntervalMinutes":1, "preemptiveCreateEnabled":false, "maxActivePartitions":100, "deleteExpired":false }' $FUSION_API/collections/$COLL/features/partitionByTime
+curl -u $FUSION_USER:$FUSION_PASS -X PUT -H 'Content-type: application/json' -d '{ "enabled":true, "timestampFieldName":"ts", "timePeriod":"1DAYS", "scheduleIntervalMinutes":1, "preemptiveCreateEnabled":false, "maxActivePartitions":100, "deleteExpired":false }' $FUSION_API/collections/$COLL/features/partitionByTime
 
 EVENTSIM_DATA="$LAB_DIR/control.data.json"
 
@@ -57,11 +68,6 @@ if [ ! -f "$EVENTSIM_DATA" ]; then
   unzip -a control.data.json.zip
 fi
 
-SPARK_MASTER=$(curl -s -u $FUSION_USER:$FUSION_PASS "$FUSION_API/spark/master")
-SOLR_ZKHOST=$(curl -s -u $FUSION_USER:$FUSION_PASS "$FUSION_API/configurations/com.lucidworks.apollo.solr.zk.connect")
+echo -e "\nUsing the Fusion spark-shell to load events into Fusion ..."
+$FUSION_HOME/bin/spark-shell -M local[*] -i load_fusion.scala
 
-echo -e "\nLaunching eventsim example using Spark master $SPARK_MASTER and Solr ZK host $SOLR_ZKHOST\n"
-
-$FUSION_HOME/apps/spark-dist/bin/spark-submit --master $SPARK_MASTER --class com.lucidworks.spark.SparkApp $SPARK_SOLR_JAR eventsim \
-   --zkHost $SOLR_ZKHOST --collection $COLL --eventsimJson "$EVENTSIM_DATA" --fusionUser $FUSION_USER --fusionPass $FUSION_PASS \
-  --fusion "$FUSION_API/index-pipelines/$COLL-default/collections/$COLL/index" -fusionAuthEnabled true
