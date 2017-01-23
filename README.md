@@ -61,20 +61,12 @@ curl "http://localhost:8983/solr/apachelogs_signals_aggr/update?commit=true"
 
 ## eventsim
 
-Clone the spark-solr project from github:
+This lab demonstrates how to read time-partitioned data using Spark.
 
-```
-git clone https://github.com/lucidworks/spark-solr.git
-````
-
-Run `mvn package -DskipTests`
-
-Set the location of the spark-solr directory in the `myenv.sh` script, e.g.
-
-```
-SPARK_SOLR_HOME=/Users/timpotter/dev/lw/projects/spark-solr
-```
 Run the `labs/eventsim/setup_eventsim.sh` script to create the Fusion objects needed to support this lab.
+
+The setup script launches the Fusion spark-shell to index 180,981 sample documents (generated from the [eventsim project](https://github.com/Interana/eventsim "eventsim")).
+
 
 ## ml20news
 
