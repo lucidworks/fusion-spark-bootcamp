@@ -4,7 +4,8 @@
     "type": "machine-learning",
     "id": "sentiment-classifier",
     "modelId": "tweets_sentiment_svm",
-    "predictionFieldName": "sentiment_d"
+    "predictionFieldName": "sentiment_d",
+    "docFeatureFieldName": "tweet_txt"
   }, {
     "type" : "field-mapping",
     "id" : "mapping-default",

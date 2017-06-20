@@ -1,3 +1,6 @@
+val rdd = sc.parallelize(Seq(1,2,3,4,5))
+rdd.filter(_ > 3).count()
+
 val readFromSolrOpts = Map(
   "collection" -> "apachelogs",
   "query" -> "+clientip:[* TO *] +ts:[* TO *] +bytes:[* TO *] +verb:[* TO *] +response:[* TO *]",

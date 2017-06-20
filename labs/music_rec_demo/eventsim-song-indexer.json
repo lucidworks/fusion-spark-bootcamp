@@ -1,0 +1,44 @@
+{
+  "id" : "eventsim-song-indexer",
+  "stages" : [ {
+    "type" : "field-mapping",
+    "id" : "9812580b-45d3-40ca-8c74-47ec00f2dee0",
+    "mappings" : [ {
+      "source" : "artist",
+      "target" : "artist",
+      "operation" : "copy"
+    }, {
+      "source" : "song",
+      "target" : "song",
+      "operation" : "copy"
+    }, {
+      "source" : "/_lw_(.*)/",
+      "operation" : "delete"
+    } ],
+    "unmapped" : {
+      "source" : "/(.*)/",
+      "operation" : "delete"
+    },
+    "reservedFieldsMappingAllowed" : true,
+    "type" : "field-mapping",
+    "skip" : false,
+    "secretSourceStageId" : "9812580b-45d3-40ca-8c74-47ec00f2dee0"
+  }, {
+    "type" : "javascript-index",
+    "id" : "5eh",
+    "script" : "function(doc) {\n  var song = doc.getFirstFieldValue(\"song\");\n  var artist = doc.getFirstFieldValue(\"artist\");\n  if (song && artist) {\n    doc.setId(artist+\"-\"+song);\n    return doc;\n  }\n  return null;\n}",
+    "type" : "javascript-index",
+    "skip" : false,
+    "label" : "Create song_id",
+    "secretSourceStageId" : "5eh"
+  }, {
+    "type" : "solr-index",
+    "id" : "a161c0e9-5b5f-4e19-af41-654aae0b6f70",
+    "enforceSchema" : true,
+    "dateFormats" : [ ],
+    "params" : [ ],
+    "bufferDocsForSolr" : true,
+    "type" : "solr-index",
+    "skip" : false
+  } ]
+}

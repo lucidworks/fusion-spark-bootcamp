@@ -93,12 +93,31 @@ fi
 num_found=$(curl -u $FUSION_USER:$FUSION_PASS -s "$FUSION_API/api/apollo/solr/ml20news/select?q=*:*&rows=0&wt=json&echoParams=none" | python -c "import sys, json; print json.load(sys.stdin)['response']['numFound']")
 echo -e "\nIndexing newsgroup documents completed. Found $num_found"
 
-echo -e "\nBuilding model Fusion's spark-shell wrapper at: $FUSION_HOME/bin/spark-shell\n"
-$FUSION_HOME/bin/spark-shell -M local[*] -i BuildNewsgroupMLModel.scala
+echo -e "\nCreating model config in Fusion"
+curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type: application/json" --data-binary @ml20news_spark_job.json "$FUSION_API/spark/configurations"
 
-echo -e "\nModel built and loaded into Fusion's blob store ... updating the index pipeline to use the classifier."
+echo -e "\nRunning job in Fusion"
+curl -u $FUSION_USER:$FUSION_PASS -X POST "$FUSION_API/spark/jobs/ml20news"
+# Poll the job status until it is done ...
+echo -e "\nWill poll the ml20news job status for up to 3 minutes to wait for training to complete."
+export PYTHONIOENCODING=utf8
+sleep 10
+COUNTER=0
+MAX_LOOPS=36
+job_status="running"
+while [  $COUNTER -lt $MAX_LOOPS ]; do
+  job_status=$(curl -u $FUSION_USER:$FUSION_PASS -s "$FUSION_API/spark/jobs/ml20news" | python -c "import sys, json; print json.load(sys.stdin)['state']")
+  echo "The ml20news job is: $job_status"
+  if [ "running" == "$job_status" ] || [ "starting" == "$job_status" ]; then
+    sleep 10
+    let COUNTER=COUNTER+1
+  else
+    let COUNTER=999
+  fi
+done
 
-curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/zip" --data-binary @ml-pipeline-model.zip "$FUSION_API/blobs/ml20news?modelType=com.lucidworks.spark.ml.SparkMLTransformerModel"
+echo -e "\n Model built into Fusion. Setting up index pipeline"
+
 curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d @fusion-ml20news-index-pipeline-ml.json $FUSION_API/index-pipelines/ml20news-default
 curl -u $FUSION_USER:$FUSION_PASS -X PUT  $FUSION_API/index-pipelines/ml20news-default/refresh
 

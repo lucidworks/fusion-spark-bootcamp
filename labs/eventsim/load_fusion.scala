@@ -13,7 +13,7 @@ object LoadEventsimIntoFusion extends java.io.Serializable {
 
   def main(args:Array[String]) {
 
-    sqlContext.read.json("control.data.json").foreachPartition(rows => {
+    spark.read.json("control.data.json").foreachPartition(rows => {
       val fusion: FusionPipelineClient = new FusionPipelineClient(fusionEndpoints)
 
       val batch = new ListBuffer[Map[String,_]]()

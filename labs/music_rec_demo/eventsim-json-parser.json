@@ -1,0 +1,26 @@
+{
+  "id" : "eventsim-json-parser",
+  "enableMediaTypeDetection" : true,
+  "maxParserDepth" : 16,
+  "parserStages" : [ {
+    "type" : "archive",
+    "enabled" : true,
+    "mediaTypes" : [ ],
+    "pathPatterns" : [ ],
+    "errorHandling" : "mark",
+    "id" : "380642f9-6794-4976-a0ae-c4a7af88e4f8",
+    "alwaysDetect" : true,
+    "inheritMediaTypes" : true
+  }, {
+    "type" : "json",
+    "enabled" : true,
+    "mediaTypes" : [ ],
+    "pathPatterns" : [ ],
+    "errorHandling" : "mark",
+    "id" : "9aff603a-82af-4bb3-86e1-a2c1bc6fd363",
+    "splitArrays" : true,
+    "includePath" : false,
+    "mappings" : [ ],
+    "inheritMediaTypes" : true
+  } ]
+}

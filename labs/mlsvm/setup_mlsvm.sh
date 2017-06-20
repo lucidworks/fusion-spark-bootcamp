@@ -36,7 +36,7 @@ curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/vnd.lucid
       { "name": "tweet_txt", "value": "I am really upset, angry, and unhappy about this election season! :-(" }
     ]
   }
-]' $FUSION_API/index-pipelines/$COLL-default/collections/$COLL/index
+]' "$FUSION_API/index-pipelines/$COLL-default/collections/$COLL/index?echo=true"
 
 curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/vnd.lucidworks-document" -d '[
   {
@@ -46,16 +46,6 @@ curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/vnd.lucid
       { "name": "tweet_txt", "value": "I am super excited that spring is finally here, yay! #happy" }
     ]
   }
-]' $FUSION_API/index-pipelines/$COLL-default/collections/$COLL/index
+]' "$FUSION_API/index-pipelines/$COLL-default/collections/$COLL/index?echo=true"
 
-curl -u $FUSION_USER:$FUSION_PASS -X PUT  $FUSION_API/index-pipelines/socialdata-default/refresh
-curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/vnd.lucidworks-document" -d '[
-  {
-    "id":"tweets-1",
-    "fields": [
-      { "name": "ts", "value": "2016-02-24T00:10:01Z" },
-      { "name": "tweet_txt", "value": "I am really upset, angry, and unhappy about this election season! :-(" }
-    ]
-  }
-]' $FUSION_API/index-pipelines/socialdata-default/collections/socialdata/index
 

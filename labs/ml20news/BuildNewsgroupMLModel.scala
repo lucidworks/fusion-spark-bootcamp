@@ -18,6 +18,7 @@ import org.apache.spark.sql.SQLContext
   * hosted in a Fusion collection.
   */
 object BuildNewsgroupMLModel extends Serializable {
+  val sqlContext = spark.sqlContext
 
   val LabelCol = "label"
   val WordsCol = "words"
@@ -26,7 +27,7 @@ object BuildNewsgroupMLModel extends Serializable {
   val PredictedLabelCol = "predictedLabel"
   val DefaultQuery = "content_txt:[* TO *] AND newsgroup_s:[* TO *]"
   val DefaultLabelField = "newsgroup_s"
-  val DefaultContentFields = "content_txt,subject"
+  val DefaultContentFields = "content_txt"
   val DefaultCollection = "ml20news"
   val DefaultSample = "1.0"
   val WhitespaceTokSchema =
@@ -76,7 +77,7 @@ object BuildNewsgroupMLModel extends Serializable {
     val pipeline = new Pipeline().setStages(Array(labelIndexer, analyzer, hashingTF, estimatorStage, labelConverter))
     val Array(trainingData, testData) = sampledSolrData.randomSplit(Array(0.7, 0.3))
     val evaluator = new MulticlassClassificationEvaluator().setLabelCol(LabelCol)
-      .setPredictionCol(PredictionCol).setMetricName("precision")
+      .setPredictionCol(PredictionCol).setMetricName("accuracy")
 
     // We use a ParamGridBuilder to construct a grid of parameters to search over,
     // with 3 values for hashingTF.numFeatures, 2 values for lr.regParam, 2 values for
@@ -107,28 +108,8 @@ object BuildNewsgroupMLModel extends Serializable {
     val accuracyCrossFold = evaluator.evaluate(predictions)
     println(s"Cross-Fold Test Error = ${1.0 - accuracyCrossFold}")
 
-    // TODO: remove - debug
-    //for (r <- predictions.select("id", labelField, PredictedLabelCol).sample(false, 0.1).collect) {
-    //  println(s"${r(0)}: actual=${r(1)}, predicted=${r(2)}")
-    //}
-
-    val metrics = new MulticlassMetrics(predictions.select(PredictionCol, LabelCol)
-      .map(r => (r.getDouble(0), r.getDouble(1))))
-
-    // output the Confusion Matrix
-    println(s"""Confusion Matrix
-                          |${metrics.confusionMatrix}\n""".stripMargin)
-
-    // compute the false positive rate per label
-    println(s"""\nF-Measure: ${metrics.fMeasure}
-                          |label\tfpr\n""".stripMargin)
-    val labels = labelConverter.getLabels
-    for (i <- labels.indices)
-      println(s"${labels(i)}\t${metrics.falsePositiveRate(i.toDouble)}")
-
     val modelId = "ml20news"
     var metadata = new java.util.HashMap[String, String]()
-
     FusionMLModelSupport.saveModelInLocalFusion(sqlContext.sparkContext, modelId, loadedCvModel, metadata)
   }
 }
