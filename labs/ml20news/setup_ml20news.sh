@@ -29,7 +29,7 @@ curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d @
 curl -u $FUSION_USER:$FUSION_PASS -X PUT "$FUSION_API/index-pipelines/ml20news-default/refresh"
 
 curl -X POST -H "Content-type:application/json" --data-binary '{
-  "add-field": { "name":"content_txt", "type":"text_en", "stored":true, "indexed":true, "multiValued":false },
+  "add-field": { "name":"body_t", "type":"text_en", "stored":true, "indexed":true, "multiValued":false },
   "add-field": { "name":"subject", "type":"text_en", "stored":true, "indexed":true, "multiValued":false }
 }' "http://$FUSION_SOLR/solr/ml20news/schema?updateTimeoutSecs=20"
 
@@ -97,7 +97,8 @@ echo -e "\nCreating model config in Fusion"
 curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type: application/json" --data-binary @ml20news_spark_job.json "$FUSION_API/spark/configurations"
 
 echo -e "\nRunning job in Fusion"
-curl -u $FUSION_USER:$FUSION_PASS -X POST "$FUSION_API/spark/jobs/ml20news"
+curl -u $FUSION_USER:$FUSION_PASS -X POST "$FUSION_API/jobs/spark:ml20news/actions" -d '{"action":"start","comment":"Started via bash script"}' -H "Content-type: application/json"
+
 # Poll the job status until it is done ...
 echo -e "\nWill poll the ml20news job status for up to 3 minutes to wait for training to complete."
 export PYTHONIOENCODING=utf8
@@ -128,7 +129,7 @@ curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/vnd.lucid
     "id":"1",
     "fields": [
       { "name": "ts", "value": "2016-02-24T00:10:01Z" },
-      { "name": "content_txt", "value": "this is a doc about atheism and atheists" }
+      { "name": "body_t", "value": "this is a doc about atheism and atheists" }
     ]
   }
 ]' "$FUSION_API/index-pipelines/ml20news-default/collections/ml20news/index?echo=true"
@@ -138,7 +139,7 @@ curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/vnd.lucid
     "id":"2",
     "fields": [
       { "name": "ts", "value": "2016-02-24T00:10:01Z" },
-      { "name": "content_txt", "value": "this is a doc about a game that involves pitching, catching, and homeruns" }
+      { "name": "body_t", "value": "this is a doc about a game that involves pitching, catching, and homeruns" }
     ]
   }
 ]' "$FUSION_API/index-pipelines/ml20news-default/collections/ml20news/index?echo=true"
@@ -148,7 +149,7 @@ curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/vnd.lucid
     "id":"3",
     "fields": [
       { "name": "ts", "value": "2016-02-24T00:10:01Z" },
-      { "name": "content_txt", "value": "this is a doc about windscreens and face shields for cycles" }
+      { "name": "body_t", "value": "this is a doc about windscreens and face shields for cycles" }
     ]
   }
 ]' "$FUSION_API/index-pipelines/ml20news-default/collections/ml20news/index?echo=true"
@@ -159,7 +160,7 @@ curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/vnd.lucid
     "fields": [
       { "name": "ts", "value": "2016-02-24T00:10:01Z" },
       { "name": "subject", "value": "motorcycles" },
-      { "name": "content_txt", "value": "this is a doc about windscreens and face shields for cycles" }
+      { "name": "body_t", "value": "this is a doc about windscreens and face shields for cycles" }
     ]
   }
 ]' "$FUSION_API/index-pipelines/ml20news-default/collections/ml20news/index?echo=true"
