@@ -1,0 +1,7 @@
+{
+  "name": "expedia",
+  "assetType": "project",
+  "description": "tables and views for the expedia project",
+  "tags": ["expedia","hotels"],
+  "cacheOnLoad": false
+}

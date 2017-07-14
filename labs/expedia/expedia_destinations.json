@@ -1,0 +1,10 @@
+{
+  "name": "destinations",
+  "assetType": "table",
+  "projectId": "expedia",
+  "description": "destinations data",
+  "tags": ["destinations","hotels"],
+  "format": "solr",
+  "cacheOnLoad": true,
+  "options": ["collection -> expedia_destinations"]
+}

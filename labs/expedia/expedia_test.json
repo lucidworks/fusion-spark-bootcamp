@@ -1,0 +1,10 @@
+{
+  "name": "test",
+  "assetType": "table",
+  "projectId": "expedia",
+  "description": "test data",
+  "tags": ["test","hotels"],
+  "format": "solr",
+  "cacheOnLoad": true,
+  "options": ["collection -> expedia_test"]
+}
