@@ -32,8 +32,8 @@ curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d @
 curl -u $FUSION_USER:$FUSION_PASS -X PUT "$FUSION_API/index-pipelines/eventsim-default/refresh"
 
 curl -X POST -H "Content-type:application/json" --data-binary '{
-  "add-field": { "name":"ts", "type":"tdate", "stored":true, "indexed":true, "multiValued":false },
-  "add-field": { "name":"registration", "type":"tdate", "stored":true, "indexed":true, "multiValued":false },
+  "add-field": { "name":"ts", "type":"pdate", "stored":true, "indexed":true, "multiValued":false },
+  "add-field": { "name":"registration", "type":"pdate", "stored":true, "indexed":true, "multiValued":false },
   "add-field": { "name":"song", "type":"string", "stored":true, "indexed":true, "multiValued":false },
   "add-field": { "name":"lastName", "type":"string", "stored":true, "indexed":true, "multiValued":false },
   "add-field": { "name":"artist", "type":"string", "stored":true, "indexed":true, "multiValued":false },
@@ -45,9 +45,9 @@ curl -X POST -H "Content-type:application/json" --data-binary '{
   "add-field": { "name":"gender", "type":"string", "stored":true, "indexed":true, "multiValued":false },
   "add-field": { "name":"method", "type":"string", "stored":true, "indexed":true, "multiValued":false },
   "add-field": { "name":"level", "type":"string", "stored":true, "indexed":true, "multiValued":false },
-  "add-field": { "name":"length", "type":"tdouble", "stored":true, "indexed":true, "multiValued":false },
+  "add-field": { "name":"length", "type":"pdouble", "stored":true, "indexed":true, "multiValued":false },
   "add-field": { "name":"userId", "type":"string", "stored":true, "indexed":true, "multiValued":false },
-  "add-field": { "name":"status", "type":"tint", "stored":true, "indexed":true, "multiValued":false },
+  "add-field": { "name":"status", "type":"pint", "stored":true, "indexed":true, "multiValued":false },
   "add-field": { "name":"sessionId", "type":"string", "stored":true, "indexed":true, "multiValued":false },
   "add-copy-field": [ { "source": "*", "dest": "_text_" } ]
 }' "http://$FUSION_SOLR/solr/eventsim/schema?updateTimeoutSecs=20"

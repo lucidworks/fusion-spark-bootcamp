@@ -41,7 +41,7 @@ curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" "$FU
   --data-binary '{"name":"artist","type":"string","indexed":true,"stored":true,"multiValued":false,"required":false,"dynamic":false,"docValues":true}'
 
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" "$FUSION_API/collections/music_rec_demo_signals/schema/fields" \
-  --data-binary '{"name":"timestamp_tdt","type":"tdate","indexed":true,"stored":true,"multiValued":false,"required":false,"dynamic":false,"docValues":true}'
+  --data-binary '{"name":"timestamp_tdt","type":"pdate","indexed":true,"stored":true,"multiValued":false,"required":false,"dynamic":false,"docValues":true}'
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" "$FUSION_API/collections/music_rec_demo_signals/schema/fields" \
   --data-binary '{"name":"registration","type":"string","indexed":true,"stored":true,"multiValued":false,"required":false,"dynamic":false,"docValues":true}'
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" "$FUSION_API/collections/music_rec_demo_signals/schema/fields" \
@@ -59,17 +59,17 @@ curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" "$FU
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" "$FUSION_API/collections/music_rec_demo_signals/schema/fields" \
   --data-binary '{"name":"page","type":"string","indexed":true,"stored":true,"multiValued":false,"required":false,"dynamic":false,"docValues":true}'
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" "$FUSION_API/collections/music_rec_demo_signals/schema/fields" \
-  --data-binary '{"name":"itemInSession","type":"tint","indexed":true,"stored":true,"multiValued":false,"required":false,"dynamic":false,"docValues":true}'
+  --data-binary '{"name":"itemInSession","type":"pint","indexed":true,"stored":true,"multiValued":false,"required":false,"dynamic":false,"docValues":true}'
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" "$FUSION_API/collections/music_rec_demo_signals/schema/fields" \
   --data-binary '{"name":"method","type":"string","indexed":true,"stored":true,"multiValued":false,"required":false,"dynamic":false,"docValues":true}'
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" "$FUSION_API/collections/music_rec_demo_signals/schema/fields" \
   --data-binary '{"name":"level","type":"string","indexed":true,"stored":true,"multiValued":false,"required":false,"dynamic":false,"docValues":true}'
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" "$FUSION_API/collections/music_rec_demo_signals/schema/fields" \
-  --data-binary '{"name":"length","type":"tdouble","indexed":true,"stored":true,"multiValued":false,"required":false,"dynamic":false,"docValues":true}'
+  --data-binary '{"name":"length","type":"pdouble","indexed":true,"stored":true,"multiValued":false,"required":false,"dynamic":false,"docValues":true}'
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" "$FUSION_API/collections/music_rec_demo_signals/schema/fields" \
   --data-binary '{"name":"user_id_s","type":"string","indexed":true,"stored":true,"multiValued":false,"required":false,"dynamic":false,"docValues":true}'
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" "$FUSION_API/collections/music_rec_demo_signals/schema/fields" \
-  --data-binary '{"name":"status","type":"tint","indexed":true,"stored":true,"multiValued":false,"required":false,"dynamic":false,"docValues":true}'
+  --data-binary '{"name":"status","type":"pint","indexed":true,"stored":true,"multiValued":false,"required":false,"dynamic":false,"docValues":true}'
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" "$FUSION_API/collections/music_rec_demo_signals/schema/fields" \
   --data-binary '{"name":"gender","type":"string","indexed":true,"stored":true,"multiValued":false,"required":false,"dynamic":false,"docValues":true}'
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" "$FUSION_API/collections/music_rec_demo_signals/schema/fields" \

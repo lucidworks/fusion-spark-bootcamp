@@ -34,21 +34,21 @@ curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d '
 echo -e "\n\nUpdating the Solr schema"
 #curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" --data-binary '{
 #  "add-field": { "name":"clientip", "type":"string", "stored":true, "indexed":true, "multiValued":false },
-#  "add-field": { "name":"ts", "type":"tdate", "stored":true, "indexed":true, "multiValued":false },
+#  "add-field": { "name":"ts", "type":"pdate", "stored":true, "indexed":true, "multiValued":false },
 #  "add-field": { "name":"verb", "type":"string", "stored":true, "indexed":true, "multiValued":false },
 #  "add-field": { "name":"response", "type":"string", "stored":true, "indexed":true, "multiValued":false },
 #  "add-field": { "name":"timestamp", "type":"string", "stored":true, "indexed":true, "multiValued":false },
-#  "add-field": { "name":"bytes", "type":"tint", "stored":true, "indexed":true, "multiValued":false }
+#  "add-field": { "name":"bytes", "type":"pint", "stored":true, "indexed":true, "multiValued":false }
 #}' "$FUSION_API/solr/$COLLECTION/schema?updateTimeoutSecs=20"
 
 # ugh! going thru the proxy doesn't seem to work!!!
 curl -X POST -H "Content-type:application/json" --data-binary '{
   "add-field": { "name":"clientip", "type":"string", "stored":true, "indexed":true, "multiValued":false },
-  "add-field": { "name":"ts", "type":"tdate", "stored":true, "indexed":true, "multiValued":false },
+  "add-field": { "name":"ts", "type":"pdate", "stored":true, "indexed":true, "multiValued":false },
   "add-field": { "name":"verb", "type":"string", "stored":true, "indexed":true, "multiValued":false },
   "add-field": { "name":"response", "type":"string", "stored":true, "indexed":true, "multiValued":false },
   "add-field": { "name":"timestamp", "type":"string", "stored":true, "indexed":true, "multiValued":false },
-  "add-field": { "name":"bytes", "type":"tint", "stored":true, "indexed":true, "multiValued":false }
+  "add-field": { "name":"bytes", "type":"pint", "stored":true, "indexed":true, "multiValued":false }
 }' "http://$FUSION_SOLR/solr/$COLLECTION/schema?updateTimeoutSecs=20"
 
 echo -e "\n\nUpdating the apachelogs pipeline"
