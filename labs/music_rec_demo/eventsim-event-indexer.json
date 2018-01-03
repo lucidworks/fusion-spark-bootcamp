@@ -48,6 +48,241 @@
     "skip" : false,
     "label" : "Create song id",
     "secretSourceStageId" : "vwm"
+  },
+{
+    "type" : "signal-formatter",
+    "id" : "ingest-signals",
+    "flatten" : true,
+    "allowedTypes" : [ ],
+    "undefinedType" : "general",
+    "timestampLocale" : "en-US",
+    "type" : "signal-formatter",
+    "skip" : false,
+    "secretSourceStageId" : "ingest-signals"
+  }, {
+    "type" : "field-mapping",
+    "id" : "mapping-signals",
+    "mappings" : [ {
+      "source" : "type",
+      "target" : "type_s",
+      "operation" : "copy"
+    }, {
+      "source" : "type",
+      "target" : "type",
+      "operation" : "move"
+    }, {
+      "source" : "params.type",
+      "target" : "type",
+      "operation" : "delete"
+    }, {
+      "source" : "flag",
+      "target" : "flag_s",
+      "operation" : "move"
+    }, {
+      "source" : "params.flag",
+      "target" : "flag_s",
+      "operation" : "move"
+    }, {
+      "source" : "timestamp",
+      "target" : "date",
+      "operation" : "copy"
+    }, {
+      "source" : "timestamp",
+      "target" : "timestamp_tdt",
+      "operation" : "move"
+    }, {
+      "source" : "params.count",
+      "target" : "count_i",
+      "operation" : "move"
+    }, {
+      "source" : "params.weight",
+      "target" : "weight_d",
+      "operation" : "move"
+    }, {
+      "source" : "params.query",
+      "target" : "query",
+      "operation" : "copy"
+    }, {
+      "source" : "params.query",
+      "target" : "query_s",
+      "operation" : "copy"
+    }, {
+      "source" : "params.query",
+      "target" : "query_t",
+      "operation" : "move"
+    }, {
+      "source" : "params.docId",
+      "target" : "doc_id_s",
+      "operation" : "copy"
+    }, {
+      "source" : "params.docId",
+      "target" : "doc_id",
+      "operation" : "move"
+    }, {
+      "source" : "params.id",
+      "target" : "doc_id_s",
+      "operation" : "copy"
+    }, {
+      "source" : "params.id",
+      "target" : "doc_id",
+      "operation" : "move"
+    }, {
+      "source" : "params.userId",
+      "target" : "user_id_s",
+      "operation" : "copy"
+    }, {
+      "source" : "params.userId",
+      "target" : "user_id",
+      "operation" : "move"
+    }, {
+      "source" : "params.user_id",
+      "target" : "user_id_s",
+      "operation" : "copy"
+    }, {
+      "source" : "params.user_id",
+      "target" : "user_id",
+      "operation" : "move"
+    }, {
+      "source" : "params.user_token",
+      "target" : "user_token",
+      "operation" : "move"
+    }, {
+      "source" : "params.sessionId",
+      "target" : "session_id_s",
+      "operation" : "copy"
+    }, {
+      "source" : "params.sessionId",
+      "target" : "session",
+      "operation" : "move"
+    }, {
+      "source" : "params.session",
+      "target" : "session_id_s",
+      "operation" : "copy"
+    }, {
+      "source" : "params.session",
+      "target" : "session",
+      "operation" : "move"
+    }, {
+      "source" : "params.filterQueries",
+      "target" : "filters_s",
+      "operation" : "copy"
+    }, {
+      "source" : "params.filterQueries",
+      "target" : "filters",
+      "operation" : "move"
+    }, {
+      "source" : "params.url",
+      "target" : "url",
+      "operation" : "move"
+    }, {
+      "source" : "params.label",
+      "target" : "label",
+      "operation" : "move"
+    }, {
+      "source" : "params.click_type",
+      "target" : "ctype",
+      "operation" : "move"
+    }, {
+      "source" : "params.ctype",
+      "target" : "ctype",
+      "operation" : "move"
+    }, {
+      "source" : "params.host",
+      "target" : "host",
+      "operation" : "move"
+    }, {
+      "source" : "params.offset",
+      "target" : "res_offset",
+      "operation" : "move"
+    }, {
+      "source" : "params.res_offset",
+      "target" : "res_offset",
+      "operation" : "move"
+    }, {
+      "source" : "params.ip_address",
+      "target" : "ip_address",
+      "operation" : "move"
+    }, {
+      "source" : "params.app_id",
+      "target" : "app_id",
+      "operation" : "move"
+    }, {
+      "source" : "params.query_object",
+      "target" : "query_object",
+      "operation" : "delete"
+    }, {
+      "source" : "query_id",
+      "target" : "query_id",
+      "operation" : "keep"
+    }, {
+      "source" : "params.query_id",
+      "target" : "query_id",
+      "operation" : "move"
+    }, {
+      "source" : "has_query",
+      "target" : "has_query",
+      "operation" : "keep"
+    }, {
+      "source" : "params.has_query",
+      "target" : "has_query",
+      "operation" : "move"
+    }, {
+      "source" : "params.start",
+      "target" : "res_offset",
+      "operation" : "move"
+    }, {
+      "source" : "params.lw.pipelineId",
+      "target" : "pipeline_id",
+      "operation" : "move"
+    }, {
+      "source" : "params.totaltime",
+      "target" : "totaltime",
+      "operation" : "move"
+    }, {
+      "source" : "params.rows",
+      "target" : "rows",
+      "operation" : "move"
+    }, {
+      "source" : "params.qtime",
+      "target" : "qtime",
+      "operation" : "move"
+    }, {
+      "source" : "params.collection",
+      "target" : "collection",
+      "operation" : "move"
+    }, {
+      "source" : "params.q",
+      "target" : "query",
+      "operation" : "delete"
+    }, {
+      "source" : "params.numdocs",
+      "target" : "hits",
+      "operation" : "move"
+    }, {
+      "source" : "params.http_method",
+      "target" : "http_method",
+      "operation" : "move"
+    }, {
+      "source" : "params.fl",
+      "target" : "fields",
+      "operation" : "move"
+    }, {
+      "source" : "params.doc_ids",
+      "target" : "doc_ids",
+      "operation" : "move"
+    }, {
+      "source" : "params.bq",
+      "target" : "boost_query_ss",
+      "operation" : "move"
+    }, {
+      "source" : "/params\\.(.*)(?<!_.{1,2})$/",
+      "target" : "params.$1_s",
+      "operation" : "move"
+    } ],
+    "reservedFieldsMappingAllowed" : false,
+    "type" : "field-mapping",
+    "skip" : false,
+    "secretSourceStageId" : "mapping-signals"
   }, {
     "type" : "solr-index",
     "id" : "eventsim-event-solr-indexer",

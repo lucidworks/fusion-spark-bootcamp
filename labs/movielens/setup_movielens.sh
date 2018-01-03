@@ -93,7 +93,8 @@ curl -X POST -H "Content-type:application/json" --data-binary '{
 }' "http://$FUSION_SOLR/solr/zipcodes/schema?updateTimeoutSecs=20"
 
 echo -e "\nLoading movielens data into Solr using Fusion's spark-shell wrapper at: $FUSION_HOME/bin/spark-shell\n"
-$FUSION_HOME/bin/spark-shell -M local[*] --packages com.databricks:spark-csv_2.10:1.5.0 -i load_solr.scala
+echo "dataDir=$DATA_DIR" > load_solr.properties
+$FUSION_HOME/bin/spark-shell -M local[*] --setup-props $THIS_LAB_DIR/load_solr.properties -i load_solr.scala
 
 echo -e "\nStarting the SQL engine"
 curl -u $FUSION_USER:$FUSION_PASS -H 'Content-type:application/json' -X PUT -d '4' "$FUSION_API/configurations/fusion.sql.cores"

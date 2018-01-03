@@ -1,5 +1,5 @@
 object LoadMovielensIntoSolr {
-  val dataDir = "ml-100k"
+  val dataDir = com.lucidworks.spark.util.SparkShellSupport.prop("dataDir").get
 
   def main(args:Array[String]) {
     
