@@ -23,13 +23,15 @@ fi
 
 COLLECTION=apachelogs
 
-echo -e "\nCreating new Fusion collection: $COLLECTION"
-curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d '{"solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
-  $FUSION_API/collections/$COLLECTION
+echo -e "\nCreating new Fusion collection $COLLECTION in the $BOOTCAMP app ..."
+curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"apachelogs","solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
+  "$FUSION_API/apps/$BOOTCAMP/collections"
 
 echo -e "\n\nEnabling signals feature for collection $COLLECTION"
 curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d '{"enabled":true}' \
   $FUSION_API/collections/$COLLECTION/features/signals
+
+sleep 5
 
 echo -e "\n\nUpdating the Solr schema"
 #curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" --data-binary '{
@@ -66,8 +68,11 @@ curl -XPOST -H "Content-type:application/json" -d '{
 }' http://$FUSION_SOLR/solr/apachelogs_signals_aggr/config
 
 curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-Type: application/json" --data-binary @job.json "$FUSION_API/spark/configurations/sessionize"
-curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-Type: application/json" "$FUSION_API/spark/jobs/sessionize"
+curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-Type: application/json" "$FUSION_API/spark/jobs/sessionize?sync=true"
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/spark/jobs"
+
+echo -e "\nChecking results of job in apachelogs_signals_aggr ..."
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/query-pipelines/_system/collections/apachelogs_signals_aggr/select?q=clientip:%5B%2A+TO+%2A%5D&wt=json&rows=0"
 
 echo -e "\n\nJob complete. Check the Fusion logs for more info."
 

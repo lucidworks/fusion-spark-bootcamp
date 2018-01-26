@@ -1,8 +1,6 @@
 #!/bin/bash
 
-FUSION_HOME=/Users/timpotter/dev/lw/sstk-local/fc-jan-2018/fusion/4.0.0-alpha2
-#FUSION_HOME=/Users/timpotter/dev/lw/sstk-local/fusion-dev/4.0.0-SNAPSHOT
-#FUSION_HOME=/Users/timpotter/dev/lw/sstk-local/fusion-dev/3.1.0
+FUSION_HOME=
 FUSION="localhost:8764"
 FUSION_USER=admin
 FUSION_PASS=password123
@@ -11,6 +9,14 @@ FUSION_API="http://$FUSION/api/apollo"
 
 curl -X POST -H 'Content-type: application/json' -d '{"password":"password123"}' http://$FUSION/api
 
-#curl -s -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" -d '{"id":"bootcamp", "name":"bootcamp","description":"dev","properties":{"headerImageName":"headerImage6","tileColor":"apps-darkblue"}}' "$FUSION_API/apps" > /dev/null
+# create bootcamp app if needed
+export BOOTCAMP=bootcamp
+APP_EXISTS=$(curl -s -u $FUSION_USER:$FUSION_PASS -o /dev/null -w '%{http_code}' "$FUSION_API/apps/bootcamp")
+if [ $APP_EXISTS -eq 404 ]; then
+  echo -e "\nbootcamp app not found, creating ..."
+  curl -s -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" -d '{"id":"bootcamp", "name":"bootcamp","description":"dev","properties":{"headerImageName":"headerImage6","tileColor":"apps-darkblue"}}' "$FUSION_API/apps?relatedObjects=false"
+  echo -e "\nCreated new Fusion app: bootcamp"
+  curl "$FUSION_API/apps/bootcamp"
+fi
 
 echo -e "\nConfigured to connect to Fusion API service at $FUSION_API as user $FUSION_USER"

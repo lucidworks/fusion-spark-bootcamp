@@ -207,7 +207,7 @@ EOF
 echo -e "\n\nExample: some rotten tomatoes (movies with low avg rating); aggregations computed by Solr"
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" "$FUSION_API/catalog/fusion/query" --data-binary @<(cat <<EOF
 {
- "sql":"SELECT m.title as title, solr.aggAvg as aggAvg FROM movies m INNER JOIN (SELECT movie_id, COUNT(*) as num_ratings, avg(rating) as aggAvg FROM ratings GROUP BY movie_id HAVING COUNT(*) > 100 ORDER BY aggAvg ASC LIMIT 10) as solr ON solr.movie_id = m.movie_id ORDER BY aggAvg ASC"
+ "sql":"SELECT m.title as title, agg.aggAvg as aggAvg FROM movies m INNER JOIN (SELECT movie_id, COUNT(*) as num_ratings, avg(rating) as aggAvg FROM ratings GROUP BY movie_id HAVING COUNT(*) > 3 ORDER BY aggAvg ASC LIMIT 10) as agg ON agg.movie_id = m.movie_id ORDER BY aggAvg ASC"
 }
 EOF
 ) 
