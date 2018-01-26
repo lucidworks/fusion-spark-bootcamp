@@ -8,7 +8,6 @@ This project contains examples and labs for learning how to use Fusion's Spark f
 * mlsvm: Classify sentiment of tweets using SVM model trained with Spark MLlib
 * ml20news: 20 newsgroup classifier based on Spark ML pipeline
 * movielens: Scala script to load movielens data into Fusion
-* nyc_taxi: Scala script to load NYC taxi trip data stored in Postgres into Solr using JDBC
 
 ## Setup
 
@@ -123,25 +122,4 @@ curl -u admin:password123 -H 'Content-type:application/json' -X PUT -d '6' "http
 ```
 
 You'll need to restart the SQL engine after making these changes.
-
-## nyc_taxi
-
-This lab requires Fusion 3.0 or later.
-
-For this lab, you'll need a Postgres DB populated with NYC taxi trip data using the tools provided by:
-https://github.com/toddwschneider/nyc-taxi-data
-
-After building the Postgres database, run the `setup_taxi.sh` script.
-
-You'll also need to add the Postgres JDBC driver to the Fusion Spark classpath by adding the following properties to:
-
-`$FUSION_HOME/apps/spark-dist/conf/spark-defaults.conf`:
-
-```
-spark.driver.extraClassPath=/Users/timpotter/dev/lw/sstk-local/nyc_taxi/postgresql-9.4.1208.jar
-spark.executor.extraClassPath=/Users/timpotter/dev/lw/sstk-local/nyc_taxi/postgresql-9.4.1208.jar
-```
-
-Once your database is populated, you can load Fusion from the database using the `load_solr.scala` script provided with this lab.
-Be sure to update the JDBC URL in the scala script to match your Postgres DB.
 
