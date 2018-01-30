@@ -16,7 +16,7 @@ if [ $APP_EXISTS -eq 404 ]; then
   echo -e "\nbootcamp app not found, creating ..."
   curl -s -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" -d '{"id":"bootcamp", "name":"bootcamp","description":"dev","properties":{"headerImageName":"headerImage6","tileColor":"apps-darkblue"}}' "$FUSION_API/apps?relatedObjects=false"
   echo -e "\nCreated new Fusion app: bootcamp"
-  curl "$FUSION_API/apps/bootcamp"
+  curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/apps/bootcamp"
 fi
 
 echo -e "\nConfigured to connect to Fusion API service at $FUSION_API as user $FUSION_USER"
