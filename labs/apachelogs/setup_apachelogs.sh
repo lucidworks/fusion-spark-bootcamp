@@ -27,30 +27,16 @@ echo -e "\nCreating new Fusion collection $COLLECTION in the $BOOTCAMP app ..."
 curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"apachelogs","solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
   "$FUSION_API/apps/$BOOTCAMP/collections"
 
-echo -e "\n\nEnabling signals feature for collection $COLLECTION"
-curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d '{"enabled":true}' \
-  $FUSION_API/collections/$COLLECTION/features/signals
-
 sleep 5
-
-echo -e "\n\nUpdating the Solr schema"
-#curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" --data-binary '{
-#  "add-field": { "name":"clientip", "type":"string", "stored":true, "indexed":true, "multiValued":false },
-#  "add-field": { "name":"ts", "type":"tdate", "stored":true, "indexed":true, "multiValued":false },
-#  "add-field": { "name":"verb", "type":"string", "stored":true, "indexed":true, "multiValued":false },
-#  "add-field": { "name":"response", "type":"string", "stored":true, "indexed":true, "multiValued":false },
-#  "add-field": { "name":"timestamp", "type":"string", "stored":true, "indexed":true, "multiValued":false },
-#  "add-field": { "name":"bytes", "type":"tint", "stored":true, "indexed":true, "multiValued":false }
-#}' "$FUSION_API/solr/$COLLECTION/schema?updateTimeoutSecs=20"
 
 # ugh! going thru the proxy doesn't seem to work!!!
 curl -X POST -H "Content-type:application/json" --data-binary '{
   "add-field": { "name":"clientip", "type":"string", "stored":true, "indexed":true, "multiValued":false },
-  "add-field": { "name":"ts", "type":"tdate", "stored":true, "indexed":true, "multiValued":false },
+  "add-field": { "name":"ts", "type":"pdate", "stored":true, "indexed":true, "multiValued":false },
   "add-field": { "name":"verb", "type":"string", "stored":true, "indexed":true, "multiValued":false },
   "add-field": { "name":"response", "type":"string", "stored":true, "indexed":true, "multiValued":false },
   "add-field": { "name":"timestamp", "type":"string", "stored":true, "indexed":true, "multiValued":false },
-  "add-field": { "name":"bytes", "type":"tint", "stored":true, "indexed":true, "multiValued":false }
+  "add-field": { "name":"bytes", "type":"pint", "stored":true, "indexed":true, "multiValued":false }
 }' "http://$FUSION_SOLR/solr/$COLLECTION/schema?updateTimeoutSecs=20"
 
 echo -e "\n\nUpdating the apachelogs pipeline"

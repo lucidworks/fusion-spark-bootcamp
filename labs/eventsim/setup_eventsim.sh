@@ -59,8 +59,6 @@ curl -XPOST -H "Content-type:application/json" -d '{
 
 echo -e "\nEnabling the partitionByTime feature in Fusion"
 curl -u $FUSION_USER:$FUSION_PASS -X PUT -H 'Content-type: application/json' -d '{ "enabled":true, "timestampFieldName":"ts", "timePeriod":"1DAYS", "scheduleIntervalMinutes":1, "preemptiveCreateEnabled":false, "maxActivePartitions":100, "deleteExpired":false }' $FUSION_API/collections/$COLL/features/partitionByTime
-curl -u $FUSION_USER:$FUSION_PASS -X PUT -H 'Content-type: application/json' -d '{ "enabled":true }' $FUSION_API/collections/$COLL/features/signals
-curl -u $FUSION_USER:$FUSION_PASS -X PUT -H 'Content-type: application/json' -d '{ "enabled":true }' $FUSION_API/collections/$COLL/features/searchLogs
 
 curl -u $FUSION_USER:$FUSION_PASS -X PUT -H 'Content-type: application/json' -d '{ "enabled":true, "timestampFieldName":"timestamp_tdt", "timePeriod":"1HOURS", "scheduleIntervalMinutes":1, "preemptiveCreateEnabled":false, "maxActivePartitions":100, "deleteExpired":false }' $FUSION_API/collections/eventsim_signals/features/partitionByTime
 
