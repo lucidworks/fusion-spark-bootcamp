@@ -26,7 +26,8 @@ fi
 COLL=eventsim
 
 echo -e "\nCreating the $COLL collection in Fusion"
-curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d '{"solrParams":{"numShards":3,"maxShardsPerNode":3}}' $FUSION_API/collections/$COLL
+curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"eventsim","solrParams":{"numShards":3,"maxShardsPerNode":3}}' \
+  "$FUSION_API/apps/$BOOTCAMP/collections"
 
 curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d @eventsim-default-index-pipeline.json "$FUSION_API/index-pipelines/eventsim-default"
 curl -u $FUSION_USER:$FUSION_PASS -X PUT "$FUSION_API/index-pipelines/eventsim-default/refresh"
@@ -58,6 +59,8 @@ curl -XPOST -H "Content-type:application/json" -d '{
 
 echo -e "\nEnabling the partitionByTime feature in Fusion"
 curl -u $FUSION_USER:$FUSION_PASS -X PUT -H 'Content-type: application/json' -d '{ "enabled":true, "timestampFieldName":"ts", "timePeriod":"1DAYS", "scheduleIntervalMinutes":1, "preemptiveCreateEnabled":false, "maxActivePartitions":100, "deleteExpired":false }' $FUSION_API/collections/$COLL/features/partitionByTime
+
+curl -u $FUSION_USER:$FUSION_PASS -X PUT -H 'Content-type: application/json' -d '{ "enabled":true, "timestampFieldName":"timestamp_tdt", "timePeriod":"1HOURS", "scheduleIntervalMinutes":1, "preemptiveCreateEnabled":false, "maxActivePartitions":100, "deleteExpired":false }' $FUSION_API/collections/eventsim_signals/features/partitionByTime
 
 EVENTSIM_DATA="$LAB_DIR/control.data.json"
 

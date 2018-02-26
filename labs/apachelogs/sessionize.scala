@@ -1,6 +1,3 @@
-val rdd = sc.parallelize(Seq(1,2,3,4,5))
-rdd.filter(_ > 3).count()
-
 val readFromSolrOpts = Map(
   "collection" -> "apachelogs",
   "query" -> "+clientip:[* TO *] +ts:[* TO *] +bytes:[* TO *] +verb:[* TO *] +response:[* TO *]",
@@ -39,5 +36,5 @@ var sessionsAgg = sqlContext.sql(
         |GROUP BY clientip,session_id
   """.stripMargin)
 
-val writeToSolrOpts = Map("collection" -> "apachelogs_signals_aggr")
+val writeToSolrOpts = Map("collection" -> "apachelogs_signals_aggr", "commit_within" -> "5000")
 sessionsAgg.write.format("solr").options(writeToSolrOpts).mode(org.apache.spark.sql.SaveMode.Overwrite).save

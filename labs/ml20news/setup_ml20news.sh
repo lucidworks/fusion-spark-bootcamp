@@ -22,7 +22,8 @@ if [ "$FUSION_PASS" == "" ]; then
 fi
 
 echo "Creating the ml20news collection in Fusion"
-curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d '{"solrParams":{"replicationFactor":1,"numShards":2,"maxShardsPerNode":2},"type":"DATA"}' "$FUSION_API/collections/ml20news"
+curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"ml20news","solrParams":{"replicationFactor":1,"numShards":2,"maxShardsPerNode":2},"type":"DATA"}' \
+  "$FUSION_API/apps/$BOOTCAMP/collections"
 
 # Stage to extract the newsgroup label
 curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d @fusion-ml20news-index-pipeline.json "$FUSION_API/index-pipelines/ml20news-default"
@@ -94,7 +95,7 @@ num_found=$(curl -u $FUSION_USER:$FUSION_PASS -s "$FUSION_API/api/apollo/solr/ml
 echo -e "\nIndexing newsgroup documents completed. Found $num_found"
 
 echo -e "\nCreating model config in Fusion"
-curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type: application/json" --data-binary @ml20news_spark_job.json "$FUSION_API/spark/configurations"
+curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type: application/json" --data-binary @ml20news_spark_job.json "$FUSION_API/apps/bootcamp/spark/configurations"
 
 echo -e "\nRunning job in Fusion"
 curl -u $FUSION_USER:$FUSION_PASS -X POST "$FUSION_API/jobs/spark:ml20news/actions" -d '{"action":"start","comment":"Started via bash script"}' -H "Content-type: application/json"

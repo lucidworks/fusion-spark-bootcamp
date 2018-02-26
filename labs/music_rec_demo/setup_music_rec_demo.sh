@@ -24,10 +24,10 @@ if [ "$FUSION_PASS" == "" ]; then
 fi
 
 echo -e "\nCreating the music_rec_demo collection in Fusion"
-curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d '{"solrParams":{"numShards":3,"maxShardsPerNode":3}}' $FUSION_API/collections/music_rec_demo
+curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"music_rec_demo","solrParams":{"numShards":3,"maxShardsPerNode":3}}' \
+  "$FUSION_API/apps/$BOOTCAMP/collections"
 
 echo -e "\n\nEnabling signals feature for music_rec_demo ..."
-curl -u $FUSION_USER:$FUSION_PASS -X PUT -H Content-type:application/json -d '{"enabled":true}' "$FUSION_API/collections/music_rec_demo/features/signals"
 curl -u $FUSION_USER:$FUSION_PASS -X PUT -H Content-type:application/json -d '{"enabled":true}' "$FUSION_API/collections/music_rec_demo/features/dynamicSchema"
 
 echo -e "\n\nCreating the song and event indexing pipelines"

@@ -23,24 +23,10 @@ fi
 
 COLLECTION=apachelogs
 
-echo -e "\nCreating new Fusion collection: $COLLECTION"
-curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d '{"solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
-  $FUSION_API/collections/$COLLECTION
-
-echo -e "\n\nEnabling signals feature for collection $COLLECTION"
-curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d '{"enabled":true}' \
-  $FUSION_API/collections/$COLLECTION/features/signals
-
-echo -e "\n\nUpdating the Solr schema"
-#curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" --data-binary '{
-#  "add-field": { "name":"clientip", "type":"string", "stored":true, "indexed":true, "multiValued":false },
-#  "add-field": { "name":"ts", "type":"pdate", "stored":true, "indexed":true, "multiValued":false },
-#  "add-field": { "name":"verb", "type":"string", "stored":true, "indexed":true, "multiValued":false },
-#  "add-field": { "name":"response", "type":"string", "stored":true, "indexed":true, "multiValued":false },
-#  "add-field": { "name":"timestamp", "type":"string", "stored":true, "indexed":true, "multiValued":false },
-#  "add-field": { "name":"bytes", "type":"pint", "stored":true, "indexed":true, "multiValued":false }
-#}' "$FUSION_API/solr/$COLLECTION/schema?updateTimeoutSecs=20"
-
+echo -e "\nCreating new Fusion collection $COLLECTION in the $BOOTCAMP app ..."
+curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"apachelogs","solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
+  "$FUSION_API/apps/$BOOTCAMP/collections"
+sleep 5
 # ugh! going thru the proxy doesn't seem to work!!!
 curl -X POST -H "Content-type:application/json" --data-binary '{
   "add-field": { "name":"clientip", "type":"string", "stored":true, "indexed":true, "multiValued":false },
@@ -65,9 +51,12 @@ curl -XPOST -H "Content-type:application/json" -d '{
   "set-property": { "updateHandler.autoSoftCommit.maxTime":5000 }
 }' http://$FUSION_SOLR/solr/apachelogs_signals_aggr/config
 
-curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-Type: application/json" --data-binary @job.json "$FUSION_API/spark/configurations/sessionize"
-curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-Type: application/json" "$FUSION_API/spark/jobs/sessionize"
+curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-Type: application/json" --data-binary @job.json "$FUSION_API/apps/bootcamp/spark/configurations"
+curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-Type: application/json" "$FUSION_API/spark/jobs/sessionize?sync=true"
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/spark/jobs"
+
+echo -e "\nChecking results of job in apachelogs_signals_aggr ..."
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/query-pipelines/_system/collections/apachelogs_signals_aggr/select?q=clientip:%5B%2A+TO+%2A%5D&wt=json&rows=0"
 
 echo -e "\n\nJob complete. Check the Fusion logs for more info."
 

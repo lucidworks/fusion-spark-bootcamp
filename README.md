@@ -8,11 +8,10 @@ This project contains examples and labs for learning how to use Fusion's Spark f
 * mlsvm: Classify sentiment of tweets using SVM model trained with Spark MLlib
 * ml20news: 20 newsgroup classifier based on Spark ML pipeline
 * movielens: Scala script to load movielens data into Fusion
-* nyc_taxi: Scala script to load NYC taxi trip data stored in Postgres into Solr using JDBC
 
 ## Setup
 
-Download and install the latest version of Fusion 3.0.x from lucidworks.com. Take note of the location where you installed Fusion, such as `/opt/lucidworks/fusion/3.0.0`. We'll refer to this location as $FUSION_HOME hereafter.
+Download and install the latest version of Fusion 4.0.x from lucidworks.com. Take note of the location where you installed Fusion, such as `/opt/lucidworks/fusion/4.0.0`. We'll refer to this location as $FUSION_HOME hereafter.
 
 Start Fusion by doing:
 ```
@@ -26,7 +25,7 @@ If this is the first time you're running Fusion, then you will be prompted to se
 
 Edit the `myenv.sh` script in this project to set environment specific variables used by lab setup scripts.
 
-The default mode of Fusion 3.0.x is to run Spark in local mode, but for these labs, we recommend starting the Fusion Spark Master and Worker processes.
+The default mode of Fusion 4.0.x is to run Spark in local mode, but for these labs, we recommend starting the Fusion Spark Master and Worker processes.
 
 ```
 cd $FUSION_HOME
@@ -45,7 +44,7 @@ bin/spark-shell
 
 ## apachelogs
 
-This lab requires Fusion 2.4.2 or later.
+This lab requires Fusion 4.0.0 or later.
 
 Run the `labs/apachelogs/setup_apachelogs.sh` script to create the Fusion objects needed to support this lab.
 
@@ -70,7 +69,9 @@ The setup script launches the Fusion spark-shell to index 180,981 sample documen
 
 ## ml20news
 
-This lab demonstrates how to deploy a Spark ML pipeline based classifier to predict a classification during indexing; requires Fusion 2.4.2 or later.
+This lab demonstrates how to deploy a Spark ML pipeline based classifier to predict a classification during indexing; requires Fusion 4.0.0 or later.
+
+NOTE: If you're running a multi-node Fusion cluster, then you need to run the setup script for this lab on a node that is running the connectors-classic service.
 
 Run the `labs/ml20news/setup_ml20news.sh` script to create the Fusion objects needed to run this lab.
 
@@ -78,7 +79,7 @@ To see how the model for this lab was trained, see: [MLPipelineScala.scala](http
 
 ## mlsvm 
 
-This lab demonstrates how to deploy a Spark MLlib based classifier to predict sentiment during indexing; requires Fusion 2.4.2. or later.
+This lab demonstrates how to deploy a Spark MLlib based classifier to predict sentiment during indexing; requires Fusion 4.0.0. or later.
 
 Run the `labs/mlsvm/setup_mlsvm.sh` script to create the Fusion objects needed to run this lab.
 
@@ -86,7 +87,7 @@ To see how the model for this lab was trained, see: [SVMExample.scala](https://g
 
 ## movielens
 
-This lab requires Fusion 3.0 or later.
+This lab requires Fusion 4.0 or later.
 
 Run the `labs/movielens/setup_movielens.sh` script to create collections in Fusion and populate them using Spark.
 
@@ -99,9 +100,8 @@ The setup script also invokes the Spark shell to load data into Solr, see the lo
 Behind the scenes, the setup script launches the Spark shell in Fusion by doing:
 
 ```
-$FUSION_HOME/bin/spark-shell --packages com.databricks:spark-csv_2.10:1.5.0 -i load_solr.scala
+$FUSION_HOME/bin/spark-shell -i load_solr.scala
 ```
-_Notice how we add the databricks csv data source package to the shell environment as it is needed by the load_solr.scala script._
 
 After loading the data, the setup script will (re)start the Fusion SQL engine using:
 
@@ -123,25 +123,4 @@ curl -u admin:password123 -H 'Content-type:application/json' -X PUT -d '6' "http
 ```
 
 You'll need to restart the SQL engine after making these changes.
-
-## nyc_taxi
-
-This lab requires Fusion 3.0 or later.
-
-For this lab, you'll need a Postgres DB populated with NYC taxi trip data using the tools provided by:
-https://github.com/toddwschneider/nyc-taxi-data
-
-After building the Postgres database, run the `setup_taxi.sh` script.
-
-You'll also need to add the Postgres JDBC driver to the Fusion Spark classpath by adding the following properties to:
-
-`$FUSION_HOME/apps/spark-dist/conf/spark-defaults.conf`:
-
-```
-spark.driver.extraClassPath=/Users/timpotter/dev/lw/sstk-local/nyc_taxi/postgresql-9.4.1208.jar
-spark.executor.extraClassPath=/Users/timpotter/dev/lw/sstk-local/nyc_taxi/postgresql-9.4.1208.jar
-```
-
-Once your database is populated, you can load Fusion from the database using the `load_solr.scala` script provided with this lab.
-Be sure to update the JDBC URL in the scala script to match your Postgres DB.
 

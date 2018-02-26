@@ -52,16 +52,16 @@ else
 fi
 
 echo -e "\nCreating new Fusion collection: users"
-curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d '{"solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
-  $FUSION_API/collections/users
+curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"users","solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
+  "$FUSION_API/apps/$BOOTCAMP/collections"
 
 curl -XPOST -H "Content-type:application/json" -d '{
   "set-property": { "updateHandler.autoSoftCommit.maxTime":5000 }
 }' http://$FUSION_SOLR/solr/users/config
 
 echo -e "\nCreating new Fusion collection: movies"
-curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d '{"solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
-  $FUSION_API/collections/movies
+curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"movies","solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
+  "$FUSION_API/apps/$BOOTCAMP/collections"
 
 curl -XPOST -H "Content-type:application/json" -d '{
   "set-property": { "updateHandler.autoSoftCommit.maxTime":5000 }
@@ -72,16 +72,16 @@ curl -X POST -H "Content-type:application/json" --data-binary '{
 }' "http://$FUSION_SOLR/solr/movies/schema?updateTimeoutSecs=20"
 
 echo -e "\nCreating new Fusion collection: ratings"
-curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d '{"solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
-  $FUSION_API/collections/ratings
+curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"ratings","solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
+  "$FUSION_API/apps/$BOOTCAMP/collections"
 
 curl -XPOST -H "Content-type:application/json" -d '{
   "set-property": { "updateHandler.autoSoftCommit.maxTime":5000 }
 }' http://$FUSION_SOLR/solr/ratings/config
 
 echo -e "\nCreating new Fusion collection: zipcodes"
-curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d '{"solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
-  $FUSION_API/collections/zipcodes
+curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"zipcodes","solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
+  "$FUSION_API/apps/$BOOTCAMP/collections"
 
 curl -XPOST -H "Content-type:application/json" -d '{
   "set-property": { "updateHandler.autoSoftCommit.maxTime":5000 }
@@ -93,7 +93,8 @@ curl -X POST -H "Content-type:application/json" --data-binary '{
 }' "http://$FUSION_SOLR/solr/zipcodes/schema?updateTimeoutSecs=20"
 
 echo -e "\nLoading movielens data into Solr using Fusion's spark-shell wrapper at: $FUSION_HOME/bin/spark-shell\n"
-$FUSION_HOME/bin/spark-shell -M local[*] --packages com.databricks:spark-csv_2.10:1.5.0 -i load_solr.scala
+echo "dataDir=$DATA_DIR" > load_solr.properties
+$FUSION_HOME/bin/spark-shell -M local[*] --setup-props $THIS_LAB_DIR/load_solr.properties -i load_solr.scala
 
 echo -e "\nStarting the SQL engine"
 curl -u $FUSION_USER:$FUSION_PASS -H 'Content-type:application/json' -X PUT -d '4' "$FUSION_API/configurations/fusion.sql.cores"
