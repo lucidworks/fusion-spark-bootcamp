@@ -53,7 +53,7 @@ fi
 
 echo -e "\nCreating new Fusion collection: users"
 curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"users","solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
-  "$FUSION_API/apps/$BOOTCAMP/collections"
+  "$FUSION_API/apps/$BOOTCAMP/collections?defaultFeatures=false"
 
 curl -XPOST -H "Content-type:application/json" -d '{
   "set-property": { "updateHandler.autoSoftCommit.maxTime":5000 }
@@ -61,7 +61,7 @@ curl -XPOST -H "Content-type:application/json" -d '{
 
 echo -e "\nCreating new Fusion collection: movies"
 curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"movies","solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
-  "$FUSION_API/apps/$BOOTCAMP/collections"
+  "$FUSION_API/apps/$BOOTCAMP/collections?defaultFeatures=false"
 
 curl -XPOST -H "Content-type:application/json" -d '{
   "set-property": { "updateHandler.autoSoftCommit.maxTime":5000 }
@@ -73,7 +73,7 @@ curl -X POST -H "Content-type:application/json" --data-binary '{
 
 echo -e "\nCreating new Fusion collection: ratings"
 curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"ratings","solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
-  "$FUSION_API/apps/$BOOTCAMP/collections"
+  "$FUSION_API/apps/$BOOTCAMP/collections?defaultFeatures=false"
 
 curl -XPOST -H "Content-type:application/json" -d '{
   "set-property": { "updateHandler.autoSoftCommit.maxTime":5000 }
@@ -81,7 +81,7 @@ curl -XPOST -H "Content-type:application/json" -d '{
 
 echo -e "\nCreating new Fusion collection: zipcodes"
 curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"zipcodes","solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
-  "$FUSION_API/apps/$BOOTCAMP/collections"
+  "$FUSION_API/apps/$BOOTCAMP/collections?defaultFeatures=false"
 
 curl -XPOST -H "Content-type:application/json" -d '{
   "set-property": { "updateHandler.autoSoftCommit.maxTime":5000 }
@@ -99,8 +99,8 @@ $FUSION_HOME/bin/spark-shell -M local[*] --setup-props $THIS_LAB_DIR/load_solr.p
 echo -e "\nStarting the SQL engine"
 curl -u $FUSION_USER:$FUSION_PASS -H 'Content-type:application/json' -X PUT -d '4' "$FUSION_API/configurations/fusion.sql.cores"
 curl -u $FUSION_USER:$FUSION_PASS -H 'Content-type:application/json' -X PUT -d '4' "$FUSION_API/configurations/fusion.sql.executor.cores"
-curl -u $FUSION_USER:$FUSION_PASS -H 'Content-type:application/json' -X PUT -d '1g' "$FUSION_API/configurations/fusion.sql.memory"
-curl -u $FUSION_USER:$FUSION_PASS -H 'Content-type:application/json' -X PUT -d '4' "$FUSION_API/configurations/fusion.sql.default.shuffle.partitions"
+curl -u $FUSION_USER:$FUSION_PASS -H 'Content-type:application/json' -X PUT -d '2g' "$FUSION_API/configurations/fusion.sql.memory"
+curl -u $FUSION_USER:$FUSION_PASS -H 'Content-type:application/json' -X PUT -d '8' "$FUSION_API/configurations/fusion.sql.default.shuffle.partitions"
 
 $FUSION_HOME/bin/sql restart
 $FUSION_HOME/bin/sql status

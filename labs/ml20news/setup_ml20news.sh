@@ -23,7 +23,7 @@ fi
 
 echo "Creating the ml20news collection in Fusion"
 curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"ml20news","solrParams":{"replicationFactor":1,"numShards":2,"maxShardsPerNode":2},"type":"DATA"}' \
-  "$FUSION_API/apps/$BOOTCAMP/collections"
+  "$FUSION_API/apps/$BOOTCAMP/collections?defaultFeatures=false"
 
 # Stage to extract the newsgroup label
 curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d @fusion-ml20news-index-pipeline.json "$FUSION_API/index-pipelines/ml20news-default"

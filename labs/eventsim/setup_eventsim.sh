@@ -27,7 +27,7 @@ COLL=eventsim
 
 echo -e "\nCreating the $COLL collection in Fusion"
 curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"eventsim","solrParams":{"numShards":3,"maxShardsPerNode":3}}' \
-  "$FUSION_API/apps/$BOOTCAMP/collections"
+  "$FUSION_API/apps/$BOOTCAMP/collections?relatedObjects=false&defaultFeatures=false"
 
 curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d @eventsim-default-index-pipeline.json "$FUSION_API/index-pipelines/eventsim-default"
 curl -u $FUSION_USER:$FUSION_PASS -X PUT "$FUSION_API/index-pipelines/eventsim-default/refresh"
