@@ -1,0 +1,25 @@
+{
+  "id" : "groundtruth_demo-exp",
+  "uniqueIdParameter" : "userId",
+  "baseSignalsCollection" : "groundtruth_demo",
+  "variants" : [ {
+    "id" : "24ec3338",
+    "name" : "v1",
+    "queryPipeline" : "groundtruth_demo",
+    "params" : [ ],
+    "weight" : 1.0
+  }, {
+    "id" : "153c266a",
+    "name" : "v2-norecs",
+    "queryPipeline" : "groundtruth_demo-norecs",
+    "params" : [ ],
+    "weight" : 1.0
+  } ],
+  "enabled" : false,
+  "metrics" : [ {
+    "type" : "relevance",
+    "name" : "bb-relevance",
+    "primary" : true,
+    "defaultProfile" : "groundtruth_demo"
+  } ]
+}

@@ -1,0 +1,17 @@
+{
+  "type" : "parallel-bulk-loader",
+  "id" : "load_signals_spark",
+  "format" : "parquet",
+  "path" : "s3a://sstk-dev/data/ground_truth.parquet",
+  "outputCollection" : "groundtruth_demo_signals",
+  "clearDatasource" : false,
+  "defineFieldsUsingInputSchema" : true,
+  "atomicUpdates" : false,
+  "shellOptions" : [ {
+    "key" : "--packages",
+    "value" : "org.apache.hadoop:hadoop-aws:2.7.3"
+  }, {
+    "key" : "--exclude-packages",
+    "value" : "com.fasterxml.jackson.core:jackson-core,joda-time:joda-time"
+  } ]
+}

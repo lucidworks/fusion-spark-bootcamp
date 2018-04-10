@@ -1,0 +1,14 @@
+{
+  "id": "groundtruth_demo-norecs",
+  "stages": [
+    {
+      "type": "search-fields"
+    },
+    {
+      "type": "facet"
+    },
+    {
+      "type": "solr-query"
+    }
+  ]
+}
