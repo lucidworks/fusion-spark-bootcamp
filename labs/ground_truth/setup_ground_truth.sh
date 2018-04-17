@@ -1,5 +1,9 @@
 #!/bin/bash
-set -x
+
+if [ ! -f core-site.xml ]; then
+   echo "ERROR: core-site.xml does not exist. Copy core-site.xml.template to core-site.xml and fill in AWS creds"
+   exit 1
+fi
 
 while [ -h "$SETUP_SCRIPT" ] ; do
   ls=`ls -ld "$SETUP_SCRIPT"`
@@ -20,10 +24,6 @@ source "$LABS_TIP/myenv.sh"
 if [ "$FUSION_PASS" == "" ]; then
   echo -e "ERROR: Must provide a valid password for Fusion user: $FUSION_USER"
   exit 1
-fi
-
-if [ ! -f core-site.xml ]; then
-   echo "ERROR: core-site.xml does not exist. Copy core-site.xml.template to core-site.xml and fill in AWS creds"
 fi
 
 cp core-site.xml $FUSION_HOME/apps/spark-dist/conf
