@@ -1,0 +1,44 @@
+{
+  "tv": {
+    "signals": [
+                    {"docId": "doc1", "count": "100"},
+                    {"docId": "doc2", "count": "50"},
+                    {"docId": "doc3", "count": "25"},
+                    {"docId": "doc4", "count": "20"}
+    ],
+    "rank": ["doc1", "doc2", "doc3", "doc4"]
+  },
+  "led tv": {
+    "signals": [
+                    {"docId": "doc5", "count": "200"},
+                    {"docId": "doc2", "count": "100"},
+                    {"docId": "doc3", "count": "80"},
+                    {"docId": "doc6", "count": "70"}
+    ],
+    "rank": ["doc5", "doc2", "doc3", "doc6"]
+  },
+  "32 inch led tv": {
+    "signals":  [
+                    {"docId": "doc7", "count": "300"},
+                    {"docId": "doc6", "count": "200"},
+                    {"docId": "doc5", "count": "90"}
+    ],
+    "rank": ["doc7", "doc6", "doc5"]
+  },
+  "tv led stand": {
+    "signals": [
+                   {"docId": "doc8", "count": "1000"},
+                   {"docId": "doc9", "count": "900"},
+                   {"docId": "doc10", "count": "800"}
+    ],
+    "rank": ["doc8", "doc9", "doc10"]
+  },
+  "32 inch tv stand": {
+    "signals": [
+                   {"docId": "doc9", "count": "100"},
+                   {"docId": "doc11", "count": "50"},
+                   {"docId": "doc12", "count": "30"}
+    ],
+    "rank": ["doc9", "doc11", "doc12"]
+  }
+}
