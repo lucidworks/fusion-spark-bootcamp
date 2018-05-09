@@ -53,12 +53,16 @@ poll_job_status () {
     job_status="running"
     while [  $COUNTER -lt $MAX_LOOPS ]; do
       job_status=$(curl -u $FUSION_USER:$FUSION_PASS -s "$FUSION_API/spark/jobs/$JOB_ID" | python -c "import sys, json; print(json.load(sys.stdin)['state'])")
-      echo "The $JOB_ID job is: $job_status"
+      echo "Job status for $JOB_ID is: $job_status"
       if [ "running" == "$job_status" ] || [ "starting" == "$job_status" ]; then
         sleep 10
         let COUNTER=COUNTER+1
       else
         let COUNTER=999
+      fi
+      if [ "finished" != "$job_status" ]; then
+        echo "Job ${JOB_ID} failed with status ${job_status}. Exiting setup script"
+        exit 1
       fi
     done
 }
