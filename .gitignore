@@ -1,3 +1,6 @@
 .idea/
 labs/apachelogs/logs_sample_processed_files_v2
 labs/eventsim/control.data.json
+
+# intellij project file
+fusion-spark-bootcamp.iml
