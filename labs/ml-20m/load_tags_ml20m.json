@@ -1,0 +1,20 @@
+{
+  "type" : "parallel-bulk-loader",
+  "id" : "load_tags_ml20m",
+  "format" : "csv",
+  "path" : "s3a://sstk-dev/ml-20m/tags.csv",
+  "readOptions" : [ {
+    "key" : "header",
+    "value" : "true"
+  } ],
+  "outputCollection" : "tags_ml20m",
+  "outputPartitions" : 24,
+  "clearDatasource" : true,
+  "defineFieldsUsingInputSchema" : true,
+  "atomicUpdates" : false,
+  "writeOptions" : [ {
+    "key" : "batch_size",
+    "value" : "5000"
+  } ],
+  "transformScala" : "def transform(inputDF: Dataset[Row]) : Dataset[Row] = {\n  val secs2ts = udf((secs: String) => new java.sql.Timestamp(secs.toLong*1000))\n  inputDF.withColumn(\"timestamp_tdt\", secs2ts($\"timestamp\")).drop(\"timestamp\").withColumnRenamed(\"userId\",\"user_id\").withColumnRenamed(\"movieId\",\"movie_id\")\n}"
+}
