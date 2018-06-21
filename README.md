@@ -124,3 +124,13 @@ curl -u admin:password123 -H 'Content-type:application/json' -X PUT -d '6' "http
 
 You'll need to restart the SQL engine after making these changes.
 
+## sparknlp-ner
+This lab requires Fusion 4.0 or later
+Run the `labs/sparknlp-ner/setup_sparknlp_ner_demo.sh` to start this lab. This script uploads a Fusion PBL job into Fusion, which
+can then be manually started to finish the job. 
+
+The job downloads the conll2003 dataset (stored in a lucidworks AWS S3 bucket), and runs sparknlp's DLNerModel against 
+each sentence in the data. Consequently, the words in each sentences are tagged with the `I-PER`, `I-ORG`, `I-LOC`, `I-MISC`, and `O` tags, and the result
+written to a collection named `sparknlp_ner_extraction` in the Fusion-managed Solr host.
+
+_NOTE: As of today (06/20/2018), this job will not execute successfully because of a version dependency issue of spark-nlp on java-aws-sdk. A PR with the fix has been submitted_
