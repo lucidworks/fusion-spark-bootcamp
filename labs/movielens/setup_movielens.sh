@@ -52,7 +52,7 @@ else
 fi
 
 echo -e "\nCreating new Fusion collection: users"
-curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"users","solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
+curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"users","solrParams":{"replicationFactor":1,"numShards":1},"type":"DATA"}' \
   "$FUSION_API/apps/$BOOTCAMP/collections?defaultFeatures=false"
 
 curl -XPOST -H "Content-type:application/json" -d '{
@@ -60,7 +60,7 @@ curl -XPOST -H "Content-type:application/json" -d '{
 }' http://$FUSION_SOLR/solr/users/config
 
 echo -e "\nCreating new Fusion collection: movies"
-curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"movies","solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
+curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"movies","solrParams":{"replicationFactor":1,"numShards":1},"type":"DATA"}' \
   "$FUSION_API/apps/$BOOTCAMP/collections?defaultFeatures=false"
 
 curl -XPOST -H "Content-type:application/json" -d '{
@@ -72,7 +72,7 @@ curl -X POST -H "Content-type:application/json" --data-binary '{
 }' "http://$FUSION_SOLR/solr/movies/schema?updateTimeoutSecs=20"
 
 echo -e "\nCreating new Fusion collection: ratings"
-curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"ratings","solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
+curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"ratings","solrParams":{"replicationFactor":1,"numShards":1},"type":"DATA"}' \
   "$FUSION_API/apps/$BOOTCAMP/collections?defaultFeatures=false"
 
 curl -XPOST -H "Content-type:application/json" -d '{
@@ -80,7 +80,7 @@ curl -XPOST -H "Content-type:application/json" -d '{
 }' http://$FUSION_SOLR/solr/ratings/config
 
 echo -e "\nCreating new Fusion collection: zipcodes"
-curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"zipcodes","solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
+curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"zipcodes","solrParams":{"replicationFactor":1,"numShards":1},"type":"DATA"}' \
   "$FUSION_API/apps/$BOOTCAMP/collections?defaultFeatures=false"
 
 curl -XPOST -H "Content-type:application/json" -d '{

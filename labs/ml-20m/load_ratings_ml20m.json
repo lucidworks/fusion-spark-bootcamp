@@ -1,0 +1,20 @@
+{
+  "type" : "parallel-bulk-loader",
+  "id" : "load_ratings_ml20m",
+  "format" : "csv",
+  "path" : "s3a://sstk-dev/ml-20m/ratings.csv",
+  "readOptions" : [ {
+    "key" : "header",
+    "value" : "true"
+  } ],
+  "outputCollection" : "ratings_ml20m",
+  "outputPartitions" : 24,
+  "clearDatasource" : true,
+  "defineFieldsUsingInputSchema" : true,
+  "atomicUpdates" : false,
+  "writeOptions" : [ {
+    "key" : "batch_size",
+    "value" : "5000"
+  } ],
+  "transformScala" : "def transform(inputDF: Dataset[Row]) : Dataset[Row] = {\n  val secs2ts = udf((secs: String) => new java.sql.Timestamp(secs.toLong*1000))\n  inputDF.withColumn(\"rating\", $\"rating\".cast(org.apache.spark.sql.types.IntegerType))\n         .withColumn(\"timestamp_tdt\", secs2ts($\"timestamp\"))\n         .drop(\"timestamp\")\n         .withColumnRenamed(\"userId\",\"user_id\")\n         .withColumnRenamed(\"movieId\",\"movie_id\")\n}"
+}

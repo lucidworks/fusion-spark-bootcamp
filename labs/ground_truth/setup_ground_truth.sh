@@ -50,17 +50,22 @@ poll_job_status () {
     sleep 10
     COUNTER=0
     MAX_LOOPS=36
-    job_status="running"
+    JOB_STATUS=""
     while [  $COUNTER -lt $MAX_LOOPS ]; do
-      job_status=$(curl -u $FUSION_USER:$FUSION_PASS -s "$FUSION_API/spark/jobs/$JOB_ID" | python -c "import sys, json; print(json.load(sys.stdin)['state'])")
-      echo "The $JOB_ID job is: $job_status"
-      if [ "running" == "$job_status" ] || [ "starting" == "$job_status" ]; then
+      JOB_STATUS=$(curl -u $FUSION_USER:$FUSION_PASS -s "$FUSION_API/spark/jobs/$JOB_ID" | python -c "import sys, json; print(json.load(sys.stdin)['state'])")
+      echo "Job status for $JOB_ID is: ${JOB_STATUS}"
+      if [ "running" == ${JOB_STATUS} ] || [ "starting" == ${JOB_STATUS} ]; then
         sleep 10
         let COUNTER=COUNTER+1
       else
         let COUNTER=999
       fi
     done
+    if [ "finished" != ${JOB_STATUS} ]; then
+      JOB_STATUS_RESP=$(curl -u $FUSION_USER:$FUSION_PASS -s "$FUSION_API/spark/jobs/$JOB_ID")
+      echo "Job ${JOB_ID} failed with status ${JOB_STATUS_RESP}. Exiting setup script"
+      exit 1
+    fi
 }
 
 echo "Creating the $COLLECTION collection in Fusion"

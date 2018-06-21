@@ -76,7 +76,7 @@ COUNTER=0
 MAX_LOOPS=36
 job_status="RUNNING"
 while [  $COUNTER -lt $MAX_LOOPS ]; do
-  job_status=$(curl -u $FUSION_USER:$FUSION_PASS -s "$FUSION_API/connectors/jobs/crawl-local-20news-18828-dir" | python -c "import sys, json; print json.load(sys.stdin)['state']")
+  job_status=$(curl -u $FUSION_USER:$FUSION_PASS -s "$FUSION_API/connectors/jobs/crawl-local-20news-18828-dir" | python -c "import sys, json; print(json.load(sys.stdin)['state'])")
   echo "The crawl-local-20news-18828-dir job is: $job_status"
   if [ "RUNNING" == "$job_status" ]; then
     sleep 10
@@ -91,7 +91,7 @@ if [ "$job_status" != "FINISHED" ]; then
   exit 1
 fi
 
-num_found=$(curl -u $FUSION_USER:$FUSION_PASS -s "$FUSION_API/api/apollo/solr/ml20news/select?q=*:*&rows=0&wt=json&echoParams=none" | python -c "import sys, json; print json.load(sys.stdin)['response']['numFound']")
+num_found=$(curl -u $FUSION_USER:$FUSION_PASS -s "$FUSION_API/api/apollo/solr/ml20news/select?q=*:*&rows=0&wt=json&echoParams=none" | python -c "import sys, json; print(json.load(sys.stdin)['response']['numFound'])")
 echo -e "\nIndexing newsgroup documents completed. Found $num_found"
 
 echo -e "\nCreating model config in Fusion"
@@ -108,7 +108,7 @@ COUNTER=0
 MAX_LOOPS=36
 job_status="running"
 while [  $COUNTER -lt $MAX_LOOPS ]; do
-  job_status=$(curl -u $FUSION_USER:$FUSION_PASS -s "$FUSION_API/spark/jobs/ml20news" | python -c "import sys, json; print json.load(sys.stdin)['state']")
+  job_status=$(curl -u $FUSION_USER:$FUSION_PASS -s "$FUSION_API/spark/jobs/ml20news" | python -c "import sys, json; print(json.load(sys.stdin)['state'])")
   echo "The ml20news job is: $job_status"
   if [ "running" == "$job_status" ] || [ "starting" == "$job_status" ]; then
     sleep 10

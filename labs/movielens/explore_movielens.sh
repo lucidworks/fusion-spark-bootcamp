@@ -183,7 +183,7 @@ curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/catalog/fusion/assets/movie_ratin
 echo -e "\n\nExample: push-down subquery into Solr to compute aggregation"
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" "$FUSION_API/catalog/fusion/query" --data-binary @<(cat <<EOF
 {
- "sql":"SELECT m.title as title, solr.aggCount as aggCount FROM movies m INNER JOIN (SELECT movie_id, COUNT(*) as aggCount FROM ratings WHERE rating >= 4 GROUP BY movie_id ORDER BY aggCount desc LIMIT 10) as solr ON solr.movie_id = m.movie_id ORDER BY aggCount DESC"
+ "sql":"SELECT m.title as title, agg.aggCount as aggCount FROM movies m INNER JOIN (SELECT movie_id, COUNT(*) as aggCount FROM ratings WHERE rating >= 4 GROUP BY movie_id ORDER BY aggCount desc LIMIT 10) as agg ON agg.movie_id = m.movie_id ORDER BY aggCount DESC"
 }
 EOF
 )
@@ -191,7 +191,7 @@ EOF
 echo -e "\n\nExample: push-down subquery into Solr to find movies about love"
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" "$FUSION_API/catalog/fusion/query" --data-binary @<(cat <<EOF
 {
-"sql":"SELECT solr.title as title, avg(rating) as avg_rating FROM ratings INNER JOIN (select movie_id,title from movies where _query_='plot_txt_en:love') as solr ON ratings.movie_id = solr.movie_id GROUP BY title ORDER BY avg_rating DESC LIMIT 10"
+"sql":"SELECT sub.title as title, avg(rating) as avg_rating FROM ratings INNER JOIN (select movie_id,title from movies where plot_txt_en='love') as sub ON ratings.movie_id = sub.movie_id GROUP BY title ORDER BY avg_rating DESC LIMIT 10"
 }
 EOF
 )
@@ -230,7 +230,7 @@ curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" -d '
 echo -e "\n\nExample: where in with Solr full-text query"
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" "$FUSION_API/catalog/fusion/query" --data-binary @<(cat <<EOF
 {
- "sql":"select movie_id, count(*) as num_ratings from ratings where movie_id IN (select movie_id from movies where _query_='plot_txt_en:dogs') group by movie_id order by num_ratings desc limit 100"
+ "sql":"select movie_id, count(*) as num_ratings from ratings where movie_id IN (select movie_id from movies where plot_txt_en='dogs') group by movie_id order by num_ratings desc limit 100"
 }
 EOF
 )
@@ -238,7 +238,7 @@ EOF
 echo -e "\n\nExample: join with geo-filter push-down query"
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" "$FUSION_API/catalog/fusion/query" --data-binary @<(cat <<EOF
 { 
-  "sql":"SELECT solr.place_name, count(*) as cnt FROM users u INNER JOIN (select place_name,zip_code from zipcodes where _query_='{!geofilt sfield=geo_location pt=44.9609,-93.2642 d=50}') as solr ON solr.zip_code = u.zip_code WHERE u.gender='F' GROUP BY solr.place_name"
+  "sql":"SELECT geo.place_name, count(*) as cnt FROM users u INNER JOIN (select place_name,zip_code from zipcodes where _query_('{!geofilt sfield=geo_location pt=44.9609,-93.2642 d=50}')) as geo ON geo.zip_code = u.zip_code WHERE u.gender='F' GROUP BY geo.place_name"
 }
 EOF
 )
@@ -246,7 +246,7 @@ EOF
 echo -e "\nExample: where in with sub-query"
 curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" "$FUSION_API/catalog/fusion/query" --data-binary @<(cat <<EOF
 {
-  "sql":"select movie_id, count(*) as num_ratings from ratings where movie_id IN (select movie_id from movies where _query_='plot_txt_en:love') group by movie_id order by num_ratings desc limit 100"
+  "sql":"select movie_id, count(*) as num_ratings from ratings where movie_id IN (select movie_id from movies where plot_txt_en='love') group by movie_id order by num_ratings desc limit 100"
 }
 EOF
 )

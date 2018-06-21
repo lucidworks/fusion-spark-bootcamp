@@ -1,0 +1,20 @@
+{
+  "type" : "parallel-bulk-loader",
+  "id" : "load_movies_ml20m",
+  "format" : "csv",
+  "path" : "s3a://sstk-dev/ml-20m/movies.csv",
+  "readOptions" : [ {
+    "key" : "header",
+    "value" : "true"
+  } ],
+  "outputCollection" : "movies_ml20m",
+  "outputPartitions" : 8,
+  "clearDatasource" : true,
+  "defineFieldsUsingInputSchema" : true,
+  "atomicUpdates" : false,
+  "writeOptions" : [ {
+    "key" : "batch_size",
+    "value" : "5000"
+  } ],
+  "transformSql" : "select movieId as id, title, split(genres,'\\\\|') as genre from _input"
+}
