@@ -28,21 +28,21 @@ import scala.io.Source
  */
 var TEST = "conll2003"
 
-var INPUT_SENTENCES_FILE = ""
-var INPUT_TAGS_FILE = ""
+var INPUT_SENTENCES_FILE = "" //containing sentences to be NER Tagged
+var INPUT_TAGS_FILE = "" //containing standardized applied NER Tags
 var sepG = ""
 var lastColG = ""
 
 if(TEST == "conll2003") {
   sepG = " "
   lastColG = "_c3"
-  INPUT_SENTENCES_FILE = "/Users/apiltamang/nlp_benchmarking/datasets/conll2003/scala-format/test/testb-sentences.txt"   //containing sentences to be NER Tagged
-  INPUT_TAGS_FILE = "/Users/apiltamang/nlp_benchmarking/datasets/conll2003/scala-format/test/eng.testb.txt"        //containing standardized applied NER Tags
+  INPUT_SENTENCES_FILE = "https://s3.amazonaws.com/sstk-dev/data/ner/testb-sentences.txt"
+  INPUT_TAGS_FILE = "https://s3.amazonaws.com/sstk-dev/data/ner/eng.testb.txt"
 } else if (TEST == "conll2002") {
   sepG = ","
   lastColG = "_c2"
-  INPUT_SENTENCES_FILE = "/Users/apiltamang/nlp_benchmarking/datasets/conll2002/scala_format/conll2002_sentences.txt"   //containing sentences to be NER Tagged
-  INPUT_TAGS_FILE = "/Users/apiltamang/nlp_benchmarking/datasets/conll2002/conll2002_tokens_tags.csv"        //containing standardized applied NER Tags
+  INPUT_SENTENCES_FILE = "https://s3.amazonaws.com/sstk-dev/data/ner/conll2002_sentences.txt"
+  INPUT_TAGS_FILE = "https://s3.amazonaws.com/sstk-dev/data/ner/conll2002_tokens_tags.csv"
 }
 
 val document = new DocumentAssembler()
