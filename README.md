@@ -133,4 +133,11 @@ The job downloads the conll2003 dataset (stored in a lucidworks AWS S3 bucket), 
 each sentence in the data. Consequently, the words in each sentences are tagged with the `I-PER`, `I-ORG`, `I-LOC`, `I-MISC`, and `O` tags, and the result
 written to a collection named `sparknlp_ner_extraction` in the Fusion-managed Solr host.
 
-_NOTE: As of today (06/20/2018), this job will not execute successfully because of a version dependency issue of spark-nlp on java-aws-sdk. A PR with the fix has been submitted_
+
+NOTES:
+- Please turn off spark master/worker before starting this job (`bin/spark-master stop` and `bin/spark-worker stop`). 
+- As of today (06/20/2018), this job will not execute successfully because of a version dependency issue of spark-nlp on java-aws-sdk. Ver 1.6.0 came out with this fix.
+- As of today (07/09/2018), this job fails because certain spark-nlp API seems to have changed, so that an exception is thrown when
+  executing the supplied transformation script. 
+  
+
