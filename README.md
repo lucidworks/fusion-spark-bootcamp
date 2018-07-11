@@ -136,8 +136,7 @@ written to a collection named `sparknlp_ner_extraction` in the Fusion-managed So
 
 NOTES:
 - Please turn off spark master/worker before starting this job (`bin/spark-master stop` and `bin/spark-worker stop`). 
-- As of today (06/20/2018), this job will not execute successfully because of a version dependency issue of spark-nlp on java-aws-sdk. Ver 1.6.0 came out with this fix.
-- As of today (07/09/2018), this job fails because certain spark-nlp API seems to have changed, so that an exception is thrown when
-  executing the supplied transformation script. 
+- Please ensure that you have the appropriate read credentials to lucidwords sstk-dev S3 buckets. The credentials
+  should be present in the machine that hosts Fusion (and not where this lab is executed). 
   
 

@@ -8,7 +8,7 @@ import spark.implicits._
 import scala.io.Source
 
 /*
- * This script is not executed by any jobs at the moment. It is provided to
+ * This script is not executed by any bootcamp jobs at the moment. It is provided to
  * show how to evaluate some accuracy metrics for the johnsnow library on
  * NER tagging tasks.
  *
@@ -16,15 +16,6 @@ import scala.io.Source
  * - conll2003,
  * - conll2002
  *
- * IMPORTANT:
- *
- * - Downlod the respective `INPUT_SENTENCES_FILE` and `INPUT_TAGS_FILE` from
- * the provided S3 buckets, and store it locally. Then please provide the
- * full paths to these files in the code_snippet below.
- *
- * - Then start the spark-shell with a dependency to the johnsnow:1.5.4, and run the scripts.
- *
- * TODO: It is possible to use the java-aws-sdk library to stream the data directly, but it's a work in progress.
  */
 var TEST = "conll2003"
 
@@ -70,6 +61,9 @@ val finisher = new Finisher()
   .setIncludeMetadata(true)
   .setOutputAsArray(false)
   .setCleanAnnotations(false)
+  .setAnnotationSplitSymbol("@")
+  .setValueSplitSymbol("#")
+
 
 val pipeline = new Pipeline().setStages(Array(document, token, normalizer, ner, nerConverter, finisher))
 val data = spark.read.option("sep","\t").csv(INPUT_SENTENCES_FILE)
@@ -77,35 +71,19 @@ val intext = data.withColumnRenamed("_c0","text")
 val result = pipeline.fit(Seq.empty[String].toDS.toDF("text")).transform(intext)
 var all_ner = result.select("finished_ner")
 
-def splitTokens(str: String): List[String] = {
-  val foo = str.split("@")
-  return foo.toList
-}
+// split sentences of form: word->SOCCER#result->O@word->JAPAN#result->I-LOC@word->GET#result->O, into
+// tokens of form: word->SOCCER#result->O, word->JAPAN#result->I-LOC, word->GET#result->O
+var entityRegex = raw"([^@]*)".r
+var entitySplit = (sent: String) => entityRegex.findAllIn(sent).toList
+var ner_by_tokens = all_ner.map(s => entitySplit(s.getAs[String](0))).flatMap(identity)
 
-var ner_by_tokens = all_ner.map(s => splitTokens(s.getAs[String](0))).flatMap(identity)
-
-def splitWords(str: String): (String,String) = {
-  // str: word->London#result->LOC
-  val xs = str.split("#")
-  var first = ""
-  var secnd = ""
-  try{
-    first = xs(0).substring(6)
-    secnd = xs(1).substring(8)
-  } catch {
-    case e: Exception => {
-      first = "ERROR: "+str
-      secnd = "ERROR: "+str
-    }
-  }
-  (first, secnd)
-}
-
-
+// Get the gold standards file
 var dfGold = spark.read.format("csv").option("header",false).option("delimiter", sepG).load(INPUT_TAGS_FILE)
-
 var dG = dfGold.select("_c0", lastColG).withColumnRenamed("_c0","word").withColumnRenamed(lastColG,"tag")
-val dP = ner_by_tokens.map(s => splitWords(s)).withColumnRenamed("_1","word").withColumnRenamed("_2","tag")
+
+// split a sentence of form: word->LUCKY#result->O, into two columns: LUCKY, O
+val tagRegex = """word->(.*)#result->(.*)""".r
+val dP = ner_by_tokens.map(s => s match {case tagRegex(a,b) => (a,b) case _ =>("","")} ).filter(s =>s._1.nonEmpty).withColumnRenamed("_1","word").withColumnRenamed("_2","tag")
 
 var mapping = Map("I-org" -> "I-ORG", "B-org" -> "I-ORG", "I-ORG" -> "I-ORG", "B-ORG" -> "I-ORG",
   "I-per" -> "I-PER", "B-per" -> "I-PER", "I-PER" -> "I-PER", "B-PER" -> "I-PER",
