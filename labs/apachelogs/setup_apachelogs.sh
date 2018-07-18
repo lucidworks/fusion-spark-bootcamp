@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e 
 
 while [ -h "$SETUP_SCRIPT" ] ; do
   ls=`ls -ld "$SETUP_SCRIPT"`
@@ -51,7 +52,7 @@ curl -XPOST -H "Content-type:application/json" -d '{
   "set-property": { "updateHandler.autoSoftCommit.maxTime":5000 }
 }' http://$FUSION_SOLR/solr/apachelogs_signals_aggr/config
 
-curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-Type: application/json" --data-binary @job.json "$FUSION_API/apps/bootcamp/spark/configurations"
+curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-Type: application/json" --data-binary @job.json "$FUSION_API/apps/$BOOTCAMP/spark/configurations"
 curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-Type: application/json" "$FUSION_API/spark/jobs/sessionize?sync=true"
 curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/spark/jobs"
 
