@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 while [ -h "$SETUP_SCRIPT" ] ; do
   ls=`ls -ld "$SETUP_SCRIPT"`
@@ -26,8 +27,8 @@ curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d 
   "$FUSION_API/apps/$BOOTCAMP/collections"
 
 # Stage to extract the newsgroup label
-curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d @fusion-ml20news-index-pipeline.json "$FUSION_API/index-pipelines/ml20news-default"
-curl -u $FUSION_USER:$FUSION_PASS -X PUT "$FUSION_API/index-pipelines/ml20news-default/refresh"
+curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d @fusion-ml20news-index-pipeline.json "$FUSION_API/apps/$BOOTCAMP/index-pipelines/ml20news-default"
+curl -u $FUSION_USER:$FUSION_PASS -X PUT "$FUSION_API/apps/$BOOTCAMP/index-pipelines/ml20news-default/refresh"
 
 curl -X POST -H "Content-type:application/json" --data-binary '{
   "add-field": { "name":"body_t", "type":"text_en", "stored":true, "indexed":true, "multiValued":false },
@@ -62,11 +63,11 @@ fi
 # Setup a local FS crawl in Fusion to index the newsgroups data
 cp fusion-ml20news-file-crawler-config.tmpl fusion-ml20news-file-crawler-config.json
 sed -i.bak 's|DATA_DIR|'$DATA_DIR'|g' fusion-ml20news-file-crawler-config.json
-curl -u $FUSION_USER:$FUSION_PASS -X POST --data-binary @fusion-ml20news-file-crawler-config.json -H "Content-type: application/json" "$FUSION_API/connectors/datasources"
+curl -u $FUSION_USER:$FUSION_PASS -X POST --data-binary @fusion-ml20news-file-crawler-config.json -H "Content-type: application/json" "$FUSION_API/apps/$BOOTCAMP/connectors/datasources"
 
 # Kick-off the crawler
 echo -e "\nStarting the crawl-local-20news-18828-dir job to index data in $DATA_DIR"
-curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type: application/json" "$FUSION_API/connectors/jobs/crawl-local-20news-18828-dir"
+curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type: application/json" "$FUSION_API/apps/$BOOTCAMP/connectors/jobs/crawl-local-20news-18828-dir"
 
 # Poll the job status until it is done ...
 echo -e "\nWill poll the crawl-local-20news-18828-dir job status for up to 3 minutes to wait for indexing to complete."
@@ -95,10 +96,10 @@ num_found=$(curl -u $FUSION_USER:$FUSION_PASS -s "$FUSION_API/api/apollo/solr/ml
 echo -e "\nIndexing newsgroup documents completed. Found $num_found"
 
 echo -e "\nCreating model config in Fusion"
-curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type: application/json" --data-binary @ml20news_spark_job.json "$FUSION_API/apps/bootcamp/spark/configurations"
+curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type: application/json" --data-binary @ml20news_spark_job.json "$FUSION_API/apps/$BOOTCAMP/spark/configurations"
 
 echo -e "\nRunning job in Fusion"
-curl -u $FUSION_USER:$FUSION_PASS -X POST "$FUSION_API/jobs/spark:ml20news/actions" -d '{"action":"start","comment":"Started via bash script"}' -H "Content-type: application/json"
+curl -u $FUSION_USER:$FUSION_PASS -X POST "$FUSION_API/apps/$BOOTCAMP/jobs/spark:ml20news/actions" -d '{"action":"start","comment":"Started via bash script"}' -H "Content-type: application/json"
 
 # Poll the job status until it is done ...
 echo -e "\nWill poll the ml20news job status for up to 3 minutes to wait for training to complete."
@@ -120,8 +121,8 @@ done
 
 echo -e "\n Model built into Fusion. Setting up index pipeline"
 
-curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d @fusion-ml20news-index-pipeline-ml.json $FUSION_API/index-pipelines/ml20news-default
-curl -u $FUSION_USER:$FUSION_PASS -X PUT  $FUSION_API/index-pipelines/ml20news-default/refresh
+curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d @fusion-ml20news-index-pipeline-ml.json $FUSION_API/apps/$BOOTCAMP/index-pipelines/ml20news-default
+curl -u $FUSION_USER:$FUSION_PASS -X PUT  $FUSION_API/apps/$BOOTCAMP/index-pipelines/ml20news-default/refresh
 
 echo -e "\nTesting the ML model with sample documents:"
 

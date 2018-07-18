@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e 
 
 while [ -h "$SETUP_SCRIPT" ] ; do
   ls=`ls -ld "$SETUP_SCRIPT"`
@@ -29,8 +30,8 @@ echo -e "\nCreating the $COLL collection in Fusion"
 curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"eventsim","solrParams":{"numShards":3,"maxShardsPerNode":3}}' \
   "$FUSION_API/apps/$BOOTCAMP/collections"
 
-curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d @eventsim-default-index-pipeline.json "$FUSION_API/index-pipelines/eventsim-default"
-curl -u $FUSION_USER:$FUSION_PASS -X PUT "$FUSION_API/index-pipelines/eventsim-default/refresh"
+curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d @eventsim-default-index-pipeline.json "$FUSION_API/apps/$BOOTCAMP/index-pipelines/eventsim-default"
+curl -u $FUSION_USER:$FUSION_PASS -X PUT "$FUSION_API/apps/$BOOTCAMP/index-pipelines/eventsim-default/refresh"
 
 curl -X POST -H "Content-type:application/json" --data-binary '{
   "add-field": { "name":"ts", "type":"pdate", "stored":true, "indexed":true, "multiValued":false },

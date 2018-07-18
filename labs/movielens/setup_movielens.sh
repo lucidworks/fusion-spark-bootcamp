@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 while [ -h "$SETUP_SCRIPT" ] ; do
   ls=`ls -ld "$SETUP_SCRIPT"`
