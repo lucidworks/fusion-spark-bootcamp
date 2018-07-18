@@ -45,9 +45,19 @@ THIS_LAB_DIR=`cd "$THIS_LAB_DIR"; pwd`
 DATA_NAME=20news-18828
 DATA_DIR=$THIS_LAB_DIR/$DATA_NAME
 DATA_URL="http://qwone.com/~jason/20Newsgroups/20news-18828.tar.gz"
+
+DOWNLOAD_DATA=true
 if [ -d "$DATA_DIR" ]; then
-  echo -e "\nFound existing $DATA_NAME data in $DATA_DIR"
-else
+    if [ "$(ls -A $DATA_DIR)" ]; then
+        echo -e "\nFound existing $DATA_NAME data in $DATA_DIR"
+        DOWNLOAD_DATA=false
+    else
+        echo "Empty $DATA_DIR"
+        rm -f $DATA_DIR
+    fi
+fi
+
+if [ "$DOWNLOAD_DATA" = true ]; then
   echo -e "\n$DATA_DIR directory not found ... \n   ... Downloading $DATA_NAME dataset from: $DATA_URL"
   curl -O $DATA_URL
   tar zxf 20news-18828.tar.gz
