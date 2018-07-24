@@ -25,9 +25,9 @@ object BuildNewsgroupMLModel extends Serializable {
   val PredictionCol = "prediction"
   val FeaturesCol = "features"
   val PredictedLabelCol = "predictedLabel"
-  val DefaultQuery = "content_txt:[* TO *] AND newsgroup_s:[* TO *]"
+  val DefaultQuery = "body_t:[* TO *] AND newsgroup_s:[* TO *]"
   val DefaultLabelField = "newsgroup_s"
-  val DefaultContentFields = "content_txt"
+  val DefaultContentFields = "body_t"
   val DefaultCollection = "ml20news"
   val DefaultSample = "1.0"
   val WhitespaceTokSchema =

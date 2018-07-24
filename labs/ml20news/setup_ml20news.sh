@@ -67,19 +67,19 @@ curl -u $FUSION_USER:$FUSION_PASS -X POST --data-binary @fusion-ml20news-file-cr
 
 # Kick-off the crawler
 echo -e "\nStarting the crawl-local-20news-18828-dir job to index data in $DATA_DIR"
-curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type: application/json" "$FUSION_API/apps/$BOOTCAMP/connectors/jobs/crawl-local-20news-18828-dir"
+curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type: application/json" "$FUSION_API/apps/$BOOTCAMP/jobs/datasource:crawl-local-20news-18828-dir/actions" -d '{"action":"start","comment":"Started via script"}'
 
 # Poll the job status until it is done ...
-echo -e "\nWill poll the crawl-local-20news-18828-dir job status for up to 3 minutes to wait for indexing to complete."
+echo -e "\nWill poll the crawl-local-20news-18828-dir job status for up to 4 minutes to wait for indexing to complete."
 export PYTHONIOENCODING=utf8
 sleep 10
 COUNTER=0
-MAX_LOOPS=36
-job_status="RUNNING"
+MAX_LOOPS=48
+job_status="running"
 while [  $COUNTER -lt $MAX_LOOPS ]; do
-  job_status=$(curl -u $FUSION_USER:$FUSION_PASS -s "$FUSION_API/connectors/jobs/crawl-local-20news-18828-dir" | python -c "import sys, json; print(json.load(sys.stdin)['state'])")
+  job_status=$(curl -u $FUSION_USER:$FUSION_PASS -s "$FUSION_API/apps/$BOOTCAMP/jobs/datasource:crawl-local-20news-18828-dir" | python -c "import sys, json; print(json.load(sys.stdin)['status'])")
   echo "The crawl-local-20news-18828-dir job is: $job_status"
-  if [ "RUNNING" == "$job_status" ]; then
+  if [ "running" == "$job_status" ]; then
     sleep 10
     let COUNTER=COUNTER+1  
   else
@@ -87,12 +87,14 @@ while [  $COUNTER -lt $MAX_LOOPS ]; do
   fi
 done
 
-if [ "$job_status" != "FINISHED" ]; then
-  echo -e "\nThe crawl-local-20news-18828-dir job has not finished (last known state: $job_status) in over 3 minutes! Script will exit as there's likely a problem that needs to be corrected manually."
+if [ "$job_status" != "success" ]; then
+  echo -e "\nThe crawl-local-20news-18828-dir job has not finished (last known state: $job_status) in over 4 minutes! Script will exit as there's likely a problem that needs to be corrected manually."
+  curl -u $FUSION_USER:$FUSION_PASS -s "$FUSION_API/apps/$BOOTCAMP/jobs/datasource:crawl-local-20news-18828-dir"
   exit 1
 fi
 
-num_found=$(curl -u $FUSION_USER:$FUSION_PASS -s "$FUSION_API/api/apollo/solr/ml20news/select?q=*:*&rows=0&wt=json&echoParams=none" | python -c "import sys, json; print(json.load(sys.stdin)['response']['numFound'])")
+sleep 3 
+num_found=$(curl -u $FUSION_USER:$FUSION_PASS -s "$FUSION_API/solr/ml20news/select?q=*:*&rows=0&wt=json&echoParams=none" | python -c "import sys, json; print(json.load(sys.stdin)['response']['numFound'])")
 echo -e "\nIndexing newsgroup documents completed. Found $num_found"
 
 echo -e "\nCreating model config in Fusion"
@@ -102,11 +104,11 @@ echo -e "\nRunning job in Fusion"
 curl -u $FUSION_USER:$FUSION_PASS -X POST "$FUSION_API/apps/$BOOTCAMP/jobs/spark:ml20news/actions" -d '{"action":"start","comment":"Started via bash script"}' -H "Content-type: application/json"
 
 # Poll the job status until it is done ...
-echo -e "\nWill poll the ml20news job status for up to 3 minutes to wait for training to complete."
+echo -e "\nWill poll the ml20news job status for up to 4 minutes to wait for training to complete."
 export PYTHONIOENCODING=utf8
 sleep 10
 COUNTER=0
-MAX_LOOPS=36
+MAX_LOOPS=48
 job_status="running"
 while [  $COUNTER -lt $MAX_LOOPS ]; do
   job_status=$(curl -u $FUSION_USER:$FUSION_PASS -s "$FUSION_API/spark/jobs/ml20news" | python -c "import sys, json; print(json.load(sys.stdin)['state'])")
@@ -118,6 +120,12 @@ while [  $COUNTER -lt $MAX_LOOPS ]; do
     let COUNTER=999
   fi
 done
+
+if [ "$job_status" != "finished" ]; then
+  echo -e "\nThe ml20news classifier training job has not finished (last known state: $job_status) in over 4 minutes! Script will exit as there's likely a problem that needs to be corrected manually."
+  curl -u $FUSION_USER:$FUSION_PASS -s "$FUSION_API/spark/jobs/ml20news"
+  exit 1
+fi
 
 echo -e "\n Model built into Fusion. Setting up index pipeline"
 

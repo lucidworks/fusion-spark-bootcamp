@@ -1,88 +1,21 @@
 {
   "id" : "crawl-local-20news-18828-dir",
-  "created" : "2016-12-21T16:58:37.363Z",
-  "modified" : "2016-12-21T16:58:37.363Z",
-  "connector" : "lucid.file",
-  "type" : "file",
-  "pipeline" : "ml20news-default",
+  "type" : "lucidworks.fs",
   "parserId" : "_system",
   "properties" : {
-    "refreshOlderThan" : -1,
-    "emitThreads" : 5,
-    "diagnosticMode" : false,
-    "refreshErrors" : false,
-    "dedupeSaveSignature" : false,
-    "crawlDBType" : "in-memory",
-    "delete" : true,
-    "initial_mapping" : {
-      "mappings" : [ {
-        "source" : "charSet",
-        "target" : "charSet_s",
-        "operation" : "move"
-      }, {
-        "source" : "fetchedDate",
-        "target" : "fetchedDate_dt",
-        "operation" : "move"
-      }, {
-        "source" : "lastModified",
-        "target" : "lastModified_dt",
-        "operation" : "move"
-      }, {
-        "source" : "signature",
-        "target" : "dedupeSignature_s",
-        "operation" : "move"
-      }, {
-        "source" : "contentSignature",
-        "target" : "signature_s",
-        "operation" : "move"
-      }, {
-        "source" : "length",
-        "target" : "length_l",
-        "operation" : "move"
-      }, {
-        "source" : "mimeType",
-        "target" : "mimeType_s",
-        "operation" : "move"
-      }, {
-        "source" : "parent",
-        "target" : "parent_s",
-        "operation" : "move"
-      }, {
-        "source" : "owner",
-        "target" : "owner_s",
-        "operation" : "move"
-      }, {
-        "source" : "group",
-        "target" : "group_s",
-        "operation" : "move"
-      } ],
-      "reservedFieldsMappingAllowed" : false,
-      "skip" : false,
-      "id" : "Anda",
-      "label" : "field-mapping",
-      "type" : "field-mapping"
-    },
-    "fetchDelayMS" : 0,
-    "refreshAll" : true,
-    "startLinks" : [ "DATA_DIR/" ],
-    "failFastOnStartLinkFailure" : true,
-    "f.minSizeBytes" : 0,
-    "maxItems" : -1,
-    "dedupe" : false,
-    "chunkSize" : 50,
-    "trackEmbeddedIDs" : true,
-    "collection" : "ml20news",
-    "deleteErrorsAfter" : -1,
-    "forceRefresh" : false,
-    "retryEmit" : true,
-    "depth" : -1,
-    "refreshStartLinks" : false,
-    "f.maxSizeBytes" : 4194304,
-    "f.addFileMetadata" : true,
-    "aliasExpiration" : 1,
-    "fetchThreads" : 5,
-    "indexCrawlDBToSolr" : false,
-    "restrictToTree" : true,
-    "retainOutlinks" : true
-  }
+    "addFileMetadata" : true,
+    "includeDirectories" : false,
+    "initialFilePaths" : [ "DATA_DIR" ],
+    "collection" : "ml20news"
+  },
+  "created" : "2018-07-23T21:35:27.142Z",
+  "modified" : "2018-07-23T21:39:35.495Z",
+  "coreProperties" : {
+    "fetchSettings" : {
+      "fetchItemQueueSize" : 100,
+      "numFetchThreads" : 4
+    }
+  },
+  "pipeline" : "ml20news-default",
+  "connector" : "lucidworks.fs"
 }

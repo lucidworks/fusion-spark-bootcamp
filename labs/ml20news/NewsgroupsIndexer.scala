@@ -151,7 +151,7 @@ object NewsgroupsIndexer extends Serializable {
           }
         }
       }
-      doc.addField("content_txt_en", content.toString())
+      doc.addField("body_t", content.toString())
     } finally {
       inputStream.close()
     }
