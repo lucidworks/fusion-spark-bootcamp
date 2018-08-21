@@ -327,3 +327,31 @@ curl -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-Type:application/json" "$FU
 EOF
 )
 
+
+curl -XPOST -H "Content-Type:application/json" "http://localhost:8765/api/v1/catalog/fusion/query" --data-binary @<(cat <<EOF
+{
+ "sql":"SELECT movies.rated AS rated FROM movies movies JOIN ratings ratings ON (movies.movie_id = ratings.movie_id) GROUP BY movies.rated"
+}
+EOF
+)
+
+curl -XPOST -H "Content-Type:application/json" "http://localhost:8765/api/v1/catalog/fusion/query" --data-binary @<(cat <<EOF
+{
+ "sql":"SELECT SUM(ratings.rating) AS sum_rating_ok, COUNT(1) AS c FROM movies JOIN ratings ON (movies.movie_id = ratings.movie_id) HAVING (COUNT(1) > 0)"
+}
+EOF
+)
+
+curl -XPOST -H "Content-Type:application/json" "http://localhost:8765/api/v1/catalog/fusion/query" --data-binary @<(cat <<EOF
+{
+ "sql":"SELECT movies.rated AS rated, SUM(1) AS sum_number_of_records_ok FROM movies movies JOIN ratings ratings ON (movies.movie_id = ratings.movie_id) GROUP BY movies.rated"
+}
+EOF
+)
+
+curl -XPOST -H "Content-Type:application/json" "http://localhost:8765/api/v1/catalog/fusion/query" --data-binary @<(cat <<EOF
+{
+ "sql": "SELECT geo.place_name, count(*) as cnt FROM users u INNER JOIN (select place_name,zip_code from zipcodes where _query_('{!geofilt sfield=geo_location pt=44.9609,-93.2642 d=50}')) as geo ON geo.zip_code = u.zip_code WHERE u.gender='F' GROUP BY geo.place_name"
+}
+EOF
+)
