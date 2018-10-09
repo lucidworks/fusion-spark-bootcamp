@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [ ! -f ../ground_truth/core-site.xml ]; then
+   echo "ERROR: file: ../ground_truth/core-site.xml does not exist. Use template ../ground-truth/core-site.xml.template to create a core-site.xml in the same folder, fill in the AWS creds, and try again."
+   exit 1
+fi
+
+
 while [ -h "$SETUP_SCRIPT" ] ; do
   ls=`ls -ld "$SETUP_SCRIPT"`
   # Drop everything prior to ->
@@ -20,6 +26,9 @@ if [ "$FUSION_PASS" == "" ]; then
   echo -e "ERROR: Must provide a valid password for Fusion user: $FUSION_USER"
   exit 1
 fi
+
+echo "copying ../ground_truth/core-site.xml --> $FUSION_HOME/apps/spark-dist/conf"
+cp ../ground_truth/core-site.xml $FUSION_HOME/apps/spark-dist/conf
 
 COLLECTION=sparknlp_ner_demo
 
