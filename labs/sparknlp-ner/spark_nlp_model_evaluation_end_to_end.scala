@@ -27,13 +27,13 @@ var lastColG = ""
 if(TEST == "conll2003") {
   sepG = " "
   lastColG = "_c3"
-  INPUT_SENTENCES_FILE = "https://s3.amazonaws.com/sstk-dev/data/ner/testb-sentences.txt"
-  INPUT_TAGS_FILE = "https://s3.amazonaws.com/sstk-dev/data/ner/eng.testb.txt"
+  INPUT_SENTENCES_FILE = "https://s3.amazonaws.com/sstk-dev-1/data/ner/testb-sentences.txt"
+  INPUT_TAGS_FILE = "https://s3.amazonaws.com/sstk-dev-1/data/ner/eng.testb.txt"
 } else if (TEST == "conll2002") {
   sepG = ","
   lastColG = "_c2"
-  INPUT_SENTENCES_FILE = "https://s3.amazonaws.com/sstk-dev/data/ner/conll2002_sentences.txt"
-  INPUT_TAGS_FILE = "https://s3.amazonaws.com/sstk-dev/data/ner/conll2002_tokens_tags.csv"
+  INPUT_SENTENCES_FILE = "https://s3.amazonaws.com/sstk-dev-1/data/ner/conll2002_sentences.txt"
+  INPUT_TAGS_FILE = "https://s3.amazonaws.com/sstk-dev-1/data/ner/conll2002_tokens_tags.csv"
 }
 
 val document = new DocumentAssembler()

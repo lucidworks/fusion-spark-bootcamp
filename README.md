@@ -136,7 +136,6 @@ written to a collection named `sparknlp_ner_extraction` in the Fusion-managed So
 
 NOTES:
 - Please turn off spark master/worker before starting this job (`bin/spark-master stop` and `bin/spark-worker stop`). 
-- Please ensure that you have the appropriate read credentials to lucidwords sstk-dev S3 buckets. The credentials
-  should be present in the machine that hosts Fusion (and not where this lab is executed). 
+- Please ensure that you have the appropriate read credentials to lucidwords sstk-dev S3 buckets.
   
 

@@ -2,7 +2,7 @@
   "type" : "parallel-bulk-loader",
   "id" : "load_signals_spark",
   "format" : "parquet",
-  "path" : "s3a://sstk-dev/data/ground_truth.parquet",
+  "path" : "s3a://sstk-dev-1/data/ground_truth.parquet",
   "outputCollection" : "groundtruth_demo_signals",
   "clearDatasource" : false,
   "defineFieldsUsingInputSchema" : true,
