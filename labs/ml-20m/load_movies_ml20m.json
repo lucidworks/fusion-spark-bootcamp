@@ -2,7 +2,7 @@
   "type" : "parallel-bulk-loader",
   "id" : "load_movies_ml20m",
   "format" : "csv",
-  "path" : "s3a://sstk-dev/ml-20m/movies.csv",
+  "path" : "s3a://sstk-dev-1/ml-20m/movies.csv",
   "readOptions" : [ {
     "key" : "header",
     "value" : "true"

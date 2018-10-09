@@ -2,7 +2,7 @@
   "type" : "parallel-bulk-loader",
   "id" : "sparknlp_ner_extraction_job_config",
   "format" : "parquet",
-  "path" : "s3a://sstk-dev/data/sparknlp_ner_extraction_data.parquet",
+  "path" : "s3a://sstk-dev-1/data/sparknlp_ner_extraction_data.parquet",
   "outputCollection" : "sparknlp_ner_extraction",
   "clearDatasource" : false,
   "defineFieldsUsingInputSchema" : true,
