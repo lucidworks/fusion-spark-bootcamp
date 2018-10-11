@@ -29,12 +29,16 @@ fi
 cp core-site.xml $FUSION_HOME/apps/spark-dist/conf
 
 COLLECTION="groundtruth_demo"
-APP_URL="$FUSION_API/apps/$BOOTCAMP"
+APP_URL="$FUSION_API/apps/$COLLECTION"
 PRODUCTS_SPARK_JOB_ID="load_products_spark"
 SIGNALS_SPARK_JOB_ID="load_signals_spark"
 EXPERIMENT="groundtruth_demo-exp"
 GROUND_TRUTH_SPARK_JOB_ID="${EXPERIMENT}-groundTruth-bb-relevance"
 RANKING_METRICS_SPARK_JOB_ID="${EXPERIMENT}-rankingMetrics-bb-relevance"
+
+curl -s -u $FUSION_USER:$FUSION_PASS -XPOST -H "Content-type:application/json" -d '{"id":"groundtruth_demo", "name":"groundtruth_demo","description":"dev","properties":{"headerImageName":"headerImage6","tileColor":"apps-darkblue"}}' "$FUSION_API/apps"
+echo -e "\nCreated new Fusion app: $COLLECTION"
+curl -u $FUSION_USER:$FUSION_PASS "$FUSION_API/apps/$COLLECTION"
 
 # Poll the job status until it is done ...
 poll_job_status () {
@@ -67,10 +71,6 @@ poll_job_status () {
       exit 1
     fi
 }
-
-echo "Creating the $COLLECTION collection in Fusion"
-curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id": "groundtruth_demo","solrParams":{"replicationFactor":1,"numShards":2,"maxShardsPerNode":2},"type":"DATA"}' \
-  "$APP_URL/collections"
 
 # Create Spark job configurations
 echo "Creating Spark job for loading products"
@@ -123,5 +123,4 @@ curl -u $FUSION_USER:$FUSION_PASS -X POST "$FUSION_API/jobs/spark:${RANKING_METR
 poll_job_status ${RANKING_METRICS_SPARK_JOB_ID}
 
 echo "Stop experiment"
-curl -u $FUSION_USER:$FUSION_PASS -X DELETE -H "Content-type:application/json" --data-binary @experiment.json \
-  "$APP_URL/experiments/${EXPERIMENT}/job"
+curl -u $FUSION_USER:$FUSION_PASS -X DELETE -H "Content-type:application/json" "$APP_URL/experiments/${EXPERIMENT}/job"
