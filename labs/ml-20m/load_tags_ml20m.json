@@ -2,7 +2,7 @@
   "type" : "parallel-bulk-loader",
   "id" : "load_tags_ml20m",
   "format" : "csv",
-  "path" : "s3a://sstk-dev/ml-20m/tags.csv",
+  "path" : "s3a://fusion-spark-bootcamp/ml-20m/tags.csv",
   "readOptions" : [ {
     "key" : "header",
     "value" : "true"

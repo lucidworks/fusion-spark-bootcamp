@@ -2,7 +2,7 @@
   "type" : "parallel-bulk-loader",
   "id" : "load_products_spark",
   "format" : "parquet",
-  "path" : "s3a://sstk-dev/data/products_with_clicks.parquet",
+  "path" : "s3a://fusion-spark-bootcamp/products_with_clicks.parquet",
   "outputCollection" : "groundtruth_demo",
   "clearDatasource" : false,
   "defineFieldsUsingInputSchema" : true,

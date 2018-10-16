@@ -25,10 +25,20 @@ COLLECTION=sparknlp_ner_demo
 
 echo -e "\nCreating new Fusion collection $COLLECTION in the $BOOTCAMP app ..."
 curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"sparknlp_ner_extraction","solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
-  "$FUSION_API/apps/$BOOTCAMP/collections"
+  "$FUSION_API/apps/$BOOTCAMP/collections?defaultFeatures=false"
+
+curl -X POST -H "Content-type:application/json" --data-binary '{
+  "add-field": { "name":"location", "type":"string", "stored":true, "indexed":true, "multiValued":true },
+  "add-field": { "name":"person", "type":"string", "stored":true, "indexed":true, "multiValued":true },
+  "add-field": { "name":"misc", "type":"string", "stored":true, "indexed":true, "multiValued":true },
+  "add-field": { "name":"organization", "type":"string", "stored":true, "indexed":true, "multiValued":true }
+}' "http://$FUSION_SOLR/solr/sparknlp_ner_extraction/schema?updateTimeoutSecs=20"
 
 echo -e "\nCreating Spark job for Spark-nlp NER extraction bootcamp lab"
 curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" --data-binary @process_ner_job.json \
     "$FUSION_API/apps/$BOOTCAMP/spark/configurations"
 
-echo -e "\n Spark job was created. Please login to Fusion, navigate to the bootcamp app, and the 'sparknlp_ner_extraction' job to start this job"
+curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/json" -d @sparknlp_ner_extraction-pipeline.json $FUSION_API/apps/$BOOTCAMP/index-pipelines/sparknlp_ner_extraction
+curl -u $FUSION_USER:$FUSION_PASS -X PUT  $FUSION_API/apps/$BOOTCAMP/index-pipelines/sparknlp_ner_extraction/refresh
+
+echo -e "\n Spark job was created. Please login to Fusion, navigate to the bootcamp app, and the 'sparknlp_ner' job to start this job"

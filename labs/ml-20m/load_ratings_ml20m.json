@@ -2,7 +2,7 @@
   "type" : "parallel-bulk-loader",
   "id" : "load_ratings_ml20m",
   "format" : "csv",
-  "path" : "s3a://sstk-dev/ml-20m/ratings.csv",
+  "path" : "s3a://fusion-spark-bootcamp/ml-20m/ratings.csv",
   "readOptions" : [ {
     "key" : "header",
     "value" : "true"

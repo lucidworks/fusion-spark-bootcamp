@@ -1,0 +1,65 @@
+{
+  "id" : "sparknlp_ner_extraction",
+  "stages" : [ {
+    "type" : "index-logging",
+    "id" : "h7l",
+    "detailed" : true,
+    "type" : "index-logging",
+    "skip" : true,
+    "licensed" : true,
+    "secretSourceStageId" : "h7l"
+  }, {
+    "type" : "field-parser",
+    "id" : "dpe",
+    "sourceField" : "ner_json",
+    "sourceEncoding" : "binary",
+    "sourceContentType" : "application/json",
+    "inheritFields" : true,
+    "parserId" : "_system",
+    "includeMetadata" : false,
+    "type" : "field-parser",
+    "skip" : false,
+    "label" : "Parse NER",
+    "licensed" : true,
+    "secretSourceStageId" : "dpe"
+  }, {
+    "type" : "field-mapping",
+    "id" : "3ec88699-1da7-4034-9d9e-44d6a807f6f2",
+    "mappings" : [ {
+      "source" : "LOC",
+      "target" : "location",
+      "operation" : "move"
+    }, {
+      "source" : "PER",
+      "target" : "person",
+      "operation" : "move"
+    }, {
+      "source" : "ORG",
+      "target" : "organization",
+      "operation" : "move"
+    }, {
+      "source" : "MISC",
+      "target" : "misc",
+      "operation" : "move"
+    } ],
+    "reservedFieldsMappingAllowed" : false,
+    "type" : "field-mapping",
+    "skip" : false,
+    "licensed" : true,
+    "secretSourceStageId" : "3ec88699-1da7-4034-9d9e-44d6a807f6f2"
+  }, {
+    "type" : "solr-index",
+    "id" : "8eb628e0-40a5-4cb1-b935-4cfd64d99e05",
+    "enforceSchema" : true,
+    "dateFormats" : [ ],
+    "params" : [ ],
+    "bufferDocsForSolr" : false,
+    "type" : "solr-index",
+    "skip" : false,
+    "licensed" : true,
+    "secretSourceStageId" : "8eb628e0-40a5-4cb1-b935-4cfd64d99e05"
+  } ],
+  "properties" : {
+    "secretSourcePipelineId" : "sparknlp_ner_extraction"
+  }
+}
