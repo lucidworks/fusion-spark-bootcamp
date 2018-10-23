@@ -124,6 +124,14 @@ curl -u admin:password123 -H 'Content-type:application/json' -X PUT -d '6' "http
 
 You'll need to restart the SQL engine after making these changes.
 
+## ground_truth
+
+This lab requires Fusion 4.0 or later
+Run the `./labs/ground_truth/setup_ground_truth.sh` to start this lab. This script creates Fusion PBL jobs to index product
+catalog and signals data from S3. Once the datasets are indexed, the script creates an experiment with ranking metrics variant and runs both
+ground truth and ranking metrics jobs. Once the script has finished, Navigate to 'Insights UI' from Fusion UI to view the results of ranking metric jobs
+
+
 ## sparknlp-ner
 This lab requires Fusion 4.0 or later
 Run the `labs/sparknlp-ner/setup_sparknlp_ner_demo.sh` to start this lab. This script uploads a Fusion PBL job into Fusion, which
@@ -133,10 +141,9 @@ The job downloads the conll2003 dataset (stored in a lucidworks AWS S3 bucket), 
 each sentence in the data. Consequently, the words in each sentences are tagged with the `I-PER`, `I-ORG`, `I-LOC`, `I-MISC`, and `O` tags, and the result
 written to a collection named `sparknlp_ner_extraction` in the Fusion-managed Solr host.
 
-
 NOTES:
 - Please turn off spark master/worker before starting this job (`bin/spark-master stop` and `bin/spark-worker stop`). 
-- Please ensure that you have the appropriate read credentials to lucidwords sstk-dev S3 buckets. The credentials
+- Please ensure that you have configured core-site.xml and copied it to `$FUSION_HOME/apps/spark-dist/conf` before running the scripts. The credentials
   should be present in the machine that hosts Fusion (and not where this lab is executed). 
   
 

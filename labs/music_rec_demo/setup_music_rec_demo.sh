@@ -1,23 +1,12 @@
 #!/bin/bash
 set -e
 
-while [ -h "$SETUP_SCRIPT" ] ; do
-  ls=`ls -ld "$SETUP_SCRIPT"`
-  # Drop everything prior to ->
-  link=`expr "$ls" : '.*-> \(.*\)$'`
-  if expr "$link" : '/.*' > /dev/null; then
-    SETUP_SCRIPT="$link"
-  else
-    SETUP_SCRIPT=`dirname "$SETUP_SCRIPT"`/"$link"
-  fi
-done
-
-LAB_DIR=`dirname "$SETUP_SCRIPT"`
-LAB_DIR=`cd "$LAB_DIR"; pwd`
-LABS_TIP=$LAB_DIR/../..
+SCRIPT_HOME="$(dirname "${BASH_SOURCE-$0}")"
+LABS_TIP=${SCRIPT_HOME}/../..
 LABS_TIP=`cd "$LABS_TIP"; pwd`
 
 source "$LABS_TIP/myenv.sh"
+cd ${SCRIPT_HOME}
 
 if [ "$FUSION_PASS" == "" ]; then
   echo -e "ERROR: Must provide a valid password for Fusion user: $FUSION_USER"

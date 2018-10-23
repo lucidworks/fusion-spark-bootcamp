@@ -1,30 +1,16 @@
 #!/bin/bash
 
-while [ -h "$SETUP_SCRIPT" ] ; do
-  ls=`ls -ld "$SETUP_SCRIPT"`
-  # Drop everything prior to ->
-  link=`expr "$ls" : '.*-> \(.*\)$'`
-  if expr "$link" : '/.*' > /dev/null; then
-    SETUP_SCRIPT="$link"
-  else
-    SETUP_SCRIPT=`dirname "$SETUP_SCRIPT"`/"$link"
-  fi
-done
-
-LABS_TIP=`dirname "$SETUP_SCRIPT"`/../..
+SCRIPT_HOME="$(dirname "${BASH_SOURCE-$0}")"
+LABS_TIP=${SCRIPT_HOME}/../..
 LABS_TIP=`cd "$LABS_TIP"; pwd`
 
 source "$LABS_TIP/myenv.sh"
+check_for_core_site
+cd ${SCRIPT_HOME}
 
 if [ "$FUSION_PASS" == "" ]; then
   echo -e "ERROR: Must provide a valid password for Fusion user: $FUSION_USER"
   exit 1
-fi
-
-CORE_SITE_XML="$FUSION_HOME/apps/spark-dist/conf/core-site.xml"
-if [ ! -f "$CORE_SITE_XML" ]; then
-   echo "ERROR: $CORE_SITE_XML is needed for downloading from S3"
-   exit 1
 fi
 
 echo -e "\nCreating new Fusion collection: movies_ml20m"
