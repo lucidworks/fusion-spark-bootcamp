@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FUSION_HOME=/Users/zirufan/Lucidworks/Fusion_builds/fusion_4_2/fusion/4.2.0-SNAPSHOT
+FUSION_HOME=
 FUSION="localhost:8764"
 FUSION_USER=admin
 FUSION_PASS=password123
