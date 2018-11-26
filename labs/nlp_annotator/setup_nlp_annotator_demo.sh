@@ -22,6 +22,14 @@ echo -e "\nCreating new Fusion collection $COLLECTION in the $BOOTCAMP app ..."
 curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" -d '{"id":"nlp_annotator_demo","solrParams":{"replicationFactor":1,"numShards":4,"maxShardsPerNode":4},"type":"DATA"}' \
   "$FUSION_API/apps/$BOOTCAMP/collections?defaultFeatures=false"
 
+echo -e "\nDownloading pretrained models from JohnSnow Lab into Fusion Blob store ..."
+curl -o sparknlpNERDLModel.zip https://s3.amazonaws.com/auxdata.johnsnowlabs.com/public/models/ner_precise_en_1.7.0_2_1539623388047.zip
+curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/zip" --data-binary @sparknlpNERDLModel.zip "$FUSION_API/apps/$BOOTCAMP/blobs/sparknlpNERDLModel.zip?resourceType=model:spark-nlp"
+rm sparknlpNERDLModel.zip
+
+curl -o sparknlpPOSModel.zip https://s3.amazonaws.com/auxdata.johnsnowlabs.com/public/models/pos_fast_en_1.6.1_2_1533853928168.zip
+curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/zip" --data-binary @sparknlpNERDLModel.zip "$FUSION_API/apps/$BOOTCAMP/blobs/sparknlpPOSModel.zip?resourceType=model:spark-nlp"
+rm sparknlpPOSModel.zip
 
 echo -e "\nCreating Spark job for NLP annotation extraction bootcamp lab"
 curl -u $FUSION_USER:$FUSION_PASS -X POST -H "Content-type:application/json" --data-binary @ner_extraction_job.json \

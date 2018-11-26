@@ -77,7 +77,7 @@ Run the `labs/ml20news/setup_ml20news.sh` script to create the Fusion objects ne
 
 To see how the model for this lab was trained, see: [MLPipelineScala.scala](https://github.com/lucidworks/spark-solr/blob/master/src/main/scala/com/lucidworks/spark/example/ml/MLPipelineScala.scala "ML Pipeline Example")
 
-## mlsvm 
+## mlsvm
 
 This lab demonstrates how to deploy a Spark MLlib based classifier to predict sentiment during indexing; requires Fusion 4.0.0. or later.
 
@@ -114,7 +114,7 @@ Test the Catalog API endpoint by executing the `explore_movielens.sh` script.
 _NOTE: It make take a few seconds the first time you run a query for Spark to distribute the Fusion shaded JAR to worker processes._
 
 You can tune the resource allocation for the SQL engine so that it has a little more memory and CPU resources. Specifically, we'll give it 6 CPU cores and 2g of memory; feel free to adjust these settings for your workstation.
- 
+
 ```
 curl -u admin:password123 -H 'Content-type:application/json' -X PUT -d '6' "http://localhost:8764/api/apollo/configurations/fusion.sql.cores"
 curl -u admin:password123 -H 'Content-type:application/json' -X PUT -d '6' "http://localhost:8764/api/apollo/configurations/fusion.sql.executor.cores"
@@ -135,15 +135,25 @@ ground truth and ranking metrics jobs. Once the script has finished, Navigate to
 ## sparknlp-ner
 This lab requires Fusion 4.0 or later
 Run the `labs/sparknlp-ner/setup_sparknlp_ner_demo.sh` to start this lab. This script uploads a Fusion PBL job into Fusion, which
-can then be manually started to finish the job. 
+can then be manually started to finish the job.
 
-The job downloads the conll2003 dataset (stored in a lucidworks AWS S3 bucket), and runs sparknlp's DLNerModel against 
+The job downloads the conll2003 dataset (stored in a lucidworks AWS S3 bucket), and runs sparknlp's DLNerModel against
 each sentence in the data. Consequently, the words in each sentences are tagged with the `I-PER`, `I-ORG`, `I-LOC`, `I-MISC`, and `O` tags, and the result
 written to a collection named `sparknlp_ner_extraction` in the Fusion-managed Solr host.
 
 NOTES:
-- Please turn off spark master/worker before starting this job (`bin/spark-master stop` and `bin/spark-worker stop`). 
+- Please turn off spark master/worker before starting this job (`bin/spark-master stop` and `bin/spark-worker stop`).
 - Please ensure that you have configured core-site.xml and copied it to `$FUSION_HOME/apps/spark-dist/conf` before running the scripts. The credentials
-  should be present in the machine that hosts Fusion (and not where this lab is executed). 
-  
+  should be present in the machine that hosts Fusion (and not where this lab is executed).
 
+
+## nlp-annotator
+This lab requires Fusion 4.2 or later
+Run the `./labs/nlp-annotator/setup_nlp_annotator_demo.sh` to start this lab. This script creates:
+1. A Fusion app `bootcamp`
+1. A collection `nlp_annotation_demo`
+1. An index pipeline `nlp_annotation_extraction` which contains the NLP_Annotator index stage. Currently the NLP_Annotator index stage is able to extract name entities, detect sentences, extract terms of certain POS tags and extract shallow chunking results powered by SparkNLP and OpenNLP models.
+1. A PBL job `nlp_annotation_extraction`(will be automatically kicked off).
+
+About the dataset:  
+The parquet file contains 947 news articles crawled by [webhose.io](https://webhose.io/products/news-feeds/). The articles report on energy refineries during certain natural disasters. This is a smart text mining use case where insurance companies extract name entities/name chunks from news articles to help evaluate rates for energy corporation facilities.
