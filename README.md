@@ -126,14 +126,14 @@ You'll need to restart the SQL engine after making these changes.
 
 ## ground_truth
 
-This lab requires Fusion 4.0 or later
+This lab requires Fusion 4.0 or later  
 Run the `./labs/ground_truth/setup_ground_truth.sh` to start this lab. This script creates Fusion PBL jobs to index product
 catalog and signals data from S3. Once the datasets are indexed, the script creates an experiment with ranking metrics variant and runs both
 ground truth and ranking metrics jobs. Once the script has finished, Navigate to 'Insights UI' from Fusion UI to view the results of ranking metric jobs
 
 
 ## sparknlp-ner
-This lab requires Fusion 4.0 or later
+This lab requires Fusion 4.0 or later  
 Run the `labs/sparknlp-ner/setup_sparknlp_ner_demo.sh` to start this lab. This script uploads a Fusion PBL job into Fusion, which
 can then be manually started to finish the job.
 
@@ -148,7 +148,7 @@ NOTES:
 
 
 ## nlp-annotator
-This lab requires Fusion 4.2 or later
+This lab requires Fusion 4.2 or later  
 Run the `./labs/nlp-annotator/setup_nlp_annotator_demo.sh` to start this lab. This script creates:
 1. A Fusion app `bootcamp`
 1. A collection `nlp_annotation_demo`
@@ -156,4 +156,4 @@ Run the `./labs/nlp-annotator/setup_nlp_annotator_demo.sh` to start this lab. Th
 1. A PBL job `nlp_annotation_extraction`(will be automatically kicked off).
 
 About the dataset:  
-The parquet file contains 947 news articles crawled by [webhose.io](https://webhose.io/products/news-feeds/). The articles report on energy refineries during certain natural disasters. This is a smart text mining use case where insurance companies extract name entities/name chunks from news articles to help evaluate rates for energy corporation facilities.
+The parquet file (stored in AWS S3) contains 947 news articles crawled by [webhose.io](https://webhose.io/products/news-feeds/). The articles report on energy refineries during certain natural disasters. This is a smart text mining use case where insurance companies extract name entities/name chunks from news articles to help evaluate rates for energy corporation facilities.
