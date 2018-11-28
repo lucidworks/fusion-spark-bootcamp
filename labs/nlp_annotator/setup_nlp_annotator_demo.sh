@@ -28,7 +28,7 @@ curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/zip" --dat
 rm sparknlpNERDLModel.zip
 
 curl -o sparknlpPOSModel.zip https://s3.amazonaws.com/auxdata.johnsnowlabs.com/public/models/pos_fast_en_1.6.1_2_1533853928168.zip
-curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/zip" --data-binary @sparknlpNERDLModel.zip "$FUSION_API/apps/$BOOTCAMP/blobs/sparknlpPOSModel.zip?resourceType=model:spark-nlp"
+curl -u $FUSION_USER:$FUSION_PASS -X PUT -H "Content-type:application/zip" --data-binary @sparknlpPOSModel.zip "$FUSION_API/apps/$BOOTCAMP/blobs/sparknlpPOSModel.zip?resourceType=model:spark-nlp"
 rm sparknlpPOSModel.zip
 
 echo -e "\nCreating Spark job for NLP annotation extraction bootcamp lab"
