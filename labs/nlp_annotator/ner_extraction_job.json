@@ -1,0 +1,18 @@
+{
+"type": "parallel-bulk-loader",
+"id": "nlp_annotation_extraction",
+"format": "parquet",
+"path": "s3a://fusion-spark-bootcamp/nlp_annotator.parquet/insurance_data.parquet",
+"outputCollection": "nlp_annotator_demo",
+"outputIndexPipeline": "nlp_annotation_extraction",
+"clearDatasource": false,
+"defineFieldsUsingInputSchema": true,
+"atomicUpdates": false,
+"writeOptions": [
+{
+"key": "batch_size",
+"value": "50"
+}
+],
+"cacheAfterRead": false
+}

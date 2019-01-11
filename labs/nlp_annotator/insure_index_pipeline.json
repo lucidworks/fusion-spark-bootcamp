@@ -1,0 +1,88 @@
+{
+"id": "nlp_annotation_extraction",
+"stages": [
+{
+"type": "solr-dynamic-field-name-mapping",
+"id": "0c3f715d-b92b-4fc7-a04d-e52460a32e1c",
+"duplicateSingleValuedFields": false,
+"fieldsToExclude": [],
+"advancedTextFieldsIndexing": true,
+"maxTextLengthForAdvancedIndexing": 100,
+"skip": false,
+"licensed": true,
+"secretSourceStageId": "0c3f715d-b92b-4fc7-a04d-e52460a32e1c"
+},
+{
+"type": "nlp-annotator",
+"id": "cye",
+"source": [
+"Text_t"
+],
+"extractorRules": [
+{
+"sourceFieldName": "Text_t",
+"extractedAnnotationType": "named_entity",
+"labelPattern": "PER.*",
+"targetFieldName": "insure_ner_person"
+},
+{
+"sourceFieldName": "Text_t",
+"extractedAnnotationType": "named_entity",
+"labelPattern": "LOC.*",
+"targetFieldName": "insure_ner_location"
+},
+{
+"sourceFieldName": "Text_t",
+"extractedAnnotationType": "named_entity",
+"labelPattern": "ORG.*",
+"targetFieldName": "insure_ner_organization"
+},
+{
+"sourceFieldName": "Text_t",
+"extractedAnnotationType": "sentence",
+"labelPattern": ".*",
+"targetFieldName": "insure_sentences"
+},
+{
+"sourceFieldName": "Text_t",
+"extractedAnnotationType": "part_of_speech",
+"labelPattern": "JJ.*",
+"targetFieldName": "insure_pos_JJ"
+}
+],
+"indexAnnotations": false,
+"annotatorType": "sparknlp",
+"sparknlpNERModel": "sparknlpNERDLModel.zip",
+"sparknlpPOSModel": "sparknlpPOSModel.zip",
+"config": "{\n  \"opennlp\": {\n    \"posModelLocation\": \"nlp/models/en-pos-maxent.bin\",\n    \"chunkerModelLocation\": \"nlp/models/en-chunker.bin\",\n    \"tokenizerModelLocation\": \"nlp/models/en-token.bin\",\n    \"sentenceModelLocation\": \"nlp/models/en-sent.bin\",\n    \"tokenNameFinderModelLocations\": {\n        \"MONEY\": \"nlp/models/en-ner-money.bin\",\n        \"PERCENT\": \"nlp/models/en-ner-percentage.bin\",\n        \"PERSON\": \"nlp/models/en-ner-person.bin\",\n        \"LOCATION\": \"nlp/models/en-ner-location.bin\",\n        \"TIME\": \"nlp/models/en-ner-time.bin\",\n        \"DATE\": \"nlp/models/en-ner-date.bin\",\n        \"ORG\": \"nlp/models/en-ner-organization.bin\"\n    }\n  }\n}\n",
+"failOnError": false,
+"skip": false,
+"label": "NLP Annotator SparkNLP",
+"licensed": true,
+"secretSourceStageId": "cye"
+},
+{
+"type": "field-mapping",
+"id": "78e845b7-754b-43dc-a71d-2f1ee7e350b3",
+"mappings": [],
+"reservedFieldsMappingAllowed": false,
+"skip": false,
+"licensed": true,
+"secretSourceStageId": "78e845b7-754b-43dc-a71d-2f1ee7e350b3"
+},
+{
+"type": "solr-index",
+"id": "4cb31e1f-85ba-4add-bf75-8351e8b4735d",
+"enforceSchema": true,
+"dateFormats": [],
+"params": [],
+"bufferDocsForSolr": false,
+"skip": false,
+"licensed": true,
+"secretSourceStageId": "4cb31e1f-85ba-4add-bf75-8351e8b4735d"
+}
+],
+"properties": {
+"secretSourcePipelineId": "nlp-pipeline"
+}
+}
